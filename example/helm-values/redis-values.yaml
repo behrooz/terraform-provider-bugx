@@ -1,0 +1,31 @@
+global:
+  redis:
+    password: "your-secure-password"
+
+image:
+  registry: "localhost:30516"
+  repository: "bitnamilegacy/redis"
+  tag: "7.2.4-debian-11-r0"
+
+architecture: standalone  # ← MOST IMPORTANT
+
+auth:
+  enabled: true
+  password: "your-secure-password"
+  service:
+    type: ClusterIP
+
+master:
+  service:    
+    type: ClusterIP
+  persistence:
+    enabled: true
+    storageClass: "longhorn"
+    size: 1Gi
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
