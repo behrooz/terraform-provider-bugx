@@ -240,7 +240,7 @@ func resourceHelmReleaseDelete(ctx context.Context, d *schema.ResourceData, m in
 	// Build the delete URL with query parameter Name=<appName>
 	// API endpoint: DELETE /deleteapp?Name=<namespace><release>
 	deleteURL := fmt.Sprintf("%s/deleteapp?Name=%s", client.BaseURL, url.QueryEscape(appName))
-	log.Printf("[DEBUG] Deleting app %s from cluster %s via %s", appName, clustername, deleteURL)
+	log.Printf("[INFO] Attempting to delete Helm release %s (app name: %s) from cluster %s via %s", release, appName, clustername, deleteURL)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, deleteURL, nil)
 	if err != nil {
@@ -257,8 +257,16 @@ func resourceHelmReleaseDelete(ctx context.Context, d *schema.ResourceData, m in
 
 	resp, diags := doRequestWithRetryDiag(ctx, client, req, client.RetryConfig)
 	if diags != nil && diags.HasError() {
-		return diags
+		// Log the error details for debugging
+		log.Printf("[ERROR] Delete API call failed for Helm release %s (app name: %s): %v", release, appName, diags)
+		// Don't clear state if the API call failed - return error so user knows
+		return diag.Errorf("failed to call delete API for Helm release %s (app name: %s): %v", release, appName, diags)
 	}
+	
+	if resp == nil {
+		return diag.Errorf("delete API returned nil response for Helm release %s (app name: %s)", release, appName)
+	}
+	
 	defer resp.Body.Close()
 
 	// Read response body
@@ -267,6 +275,9 @@ func resourceHelmReleaseDelete(ctx context.Context, d *schema.ResourceData, m in
 		log.Printf("[WARN] failed to read deleteapp response body: %v", readErr)
 	}
 
+	bodyStr := string(bodyBytes)
+	log.Printf("[DEBUG] Delete API response for %s: Status=%d, Body=%s", appName, resp.StatusCode, bodyStr)
+
 	if resp.StatusCode == http.StatusNotFound {
 		log.Printf("[INFO] App %s not found (already deleted)", release)
 		d.SetId("")
@@ -274,13 +285,14 @@ func resourceHelmReleaseDelete(ctx context.Context, d *schema.ResourceData, m in
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		bodyStr := string(bodyBytes)
 		if bodyStr == "" {
 			bodyStr = "(no response body)"
 		}
-		return diag.Errorf("deleteapp failed for %s: %s: %s", release, resp.Status, bodyStr)
+		log.Printf("[ERROR] Delete API returned error status for Helm release %s (app name: %s): %s - %s", release, appName, resp.Status, bodyStr)
+		return diag.Errorf("deleteapp failed for %s (app name: %s): %s: %s", release, appName, resp.Status, bodyStr)
 	}
 
+	log.Printf("[INFO] Delete API call succeeded for Helm release %s (app name: %s) - Status: %d", release, appName, resp.StatusCode)
 	log.Printf("[INFO] successfully deleted app %s from cluster %s", release, clustername)
 	d.SetId("")
 	return nil

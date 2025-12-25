@@ -1,0 +1,30 @@
+image:
+  registry: docker.io
+  repository: bitnamilegacy/rabbitmq
+  tag: 3.12.12-debian-11-r0
+
+auth:
+  username: admin
+  password: "admin"
+  securePassword: true
+  existingPasswordSecret: ""
+
+serviceAccount:  
+  create: false
+  name: ""
+  namespace: "default"
+  awsRoleArn: ""
+  owner: ""
+  automountServiceAccountToken: true  
+  annotations: {} 
+
+service:  
+  type: ClusterIP
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 200Mi
+  limits:
+    cpu: 200m
+    memory: 200Mi

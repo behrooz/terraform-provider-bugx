@@ -32,8 +32,7 @@ primary:
 # Using MySQL 8.0 instead of 9.x because MySQL 9.0+ removed support for
 # 'default_authentication_plugin=mysql_native_password' which the Bitnami
 # chart uses by default. MySQL 8.0 is LTS and fully supports this setting.
-image:
-  registry: localhost:30516
+image:  
   repository: bitnamilegacy/mysql
   tag: "8.0.39-debian-12-r0"
 
