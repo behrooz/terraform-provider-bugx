@@ -69,6 +69,7 @@ func Provider() *schema.Provider {
 			"vcluster_cluster":       resourceCluster(),
 			"vcluster_helm_release":  resourceHelmRelease(),
 			"vcluster_orphan_cleanup": resourceOrphanCleanup(),
+			"vcluster_secret":        resourceSecret(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"vcluster_cluster": dataSourceCluster(),

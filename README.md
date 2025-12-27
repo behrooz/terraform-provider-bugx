@@ -6,6 +6,7 @@ Custom Terraform provider that talks to a vcluster API and calls `/createcluster
 
 - **Cluster Management**: Create, read, update, and delete vcluster instances
 - **Helm Release Management**: Deploy and manage Helm charts on vclusters
+- **Secret Management**: Create, read, update, and delete secrets via REST API
 - **Data Sources**: Query existing clusters without managing them
 - **Retry Logic**: Automatic retry with exponential backoff for transient network errors
 - **Configurable Timeouts**: Customizable HTTP client timeouts and retry settings
@@ -132,6 +133,46 @@ resource "vcluster_helm_release" "mysql" {
   values_file = "${path.module}/helm-values/mysql-values.yaml"
   depends_on  = [vcluster_cluster.devcluster]
 }
+```
+
+### Secret Management
+
+Create, update, and delete secrets:
+
+```hcl
+resource "vcluster_secret" "example" {
+  name        = "my-secret"
+  description = "Example secret for testing"
+  
+  data = {
+    username = "admin"
+    password = "secret-password"
+    api_key  = "sk-1234567890abcdef"
+  }
+}
+
+# Output the secret metadata (data values are sensitive and won't be shown)
+output "secret_id" {
+  value = vcluster_secret.example.id
+}
+
+output "secret_created_at" {
+  value = vcluster_secret.example.created_at
+}
+```
+
+**Note**: The secret resource uses the `/api/v1/secrets` endpoint. Make sure your API base URL points to the correct server (e.g., `http://localhost:8080` for simple-vault API).
+
+**Secret Resource Attributes**:
+- `name` (required): Unique name for the secret
+- `description` (optional): Description of the secret
+- `data` (required): Map of key-value pairs (marked as sensitive)
+- `created_at` (computed): Timestamp when the secret was created
+- `updated_at` (computed): Timestamp when the secret was last updated
+
+**Import existing secrets**:
+```bash
+terraform import vcluster_secret.example <secret-id>
 ```
 
 ### Improvements
