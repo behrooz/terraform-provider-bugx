@@ -39,7 +39,7 @@ func Provider() *schema.Provider {
 			"base_url": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Base URL of vcluster API, e.g. http://localhost:8082",
+				Description: "Base URL of vcluster API, e.g. http://192.168.1.4",
 			},
 			"username": {
 				Type:        schema.TypeString,
@@ -66,10 +66,10 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"vcluster_cluster":       resourceCluster(),
-			"vcluster_helm_release":  resourceHelmRelease(),
+			"vcluster_cluster":        resourceCluster(),
+			"vcluster_helm_release":   resourceHelmRelease(),
 			"vcluster_orphan_cleanup": resourceOrphanCleanup(),
-			"vcluster_secret":        resourceSecret(),
+			"vcluster_secret":         resourceSecret(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"vcluster_cluster": dataSourceCluster(),

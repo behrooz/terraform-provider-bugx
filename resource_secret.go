@@ -31,7 +31,7 @@ type SecretInfo struct {
 	UpdatedAt   string            `json:"updatedAt,omitempty"`
 }
 
-// SecretsListResponse represents the response from GET /api/v1/secrets.
+// SecretsListResponse represents the response from GET /secrets/api/v1/secrets.
 type SecretsListResponse struct {
 	Secrets []SecretInfo `json:"secrets"`
 }
@@ -102,7 +102,7 @@ func buildSecretPayload(d *schema.ResourceData) SecretPayload {
 	return payload
 }
 
-// resourceSecretCreate calls POST /api/v1/secrets.
+// resourceSecretCreate calls POST /secrets/api/v1/secrets.
 func resourceSecretCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client, ok := m.(*apiClient)
 	if !ok || client == nil {
@@ -115,13 +115,13 @@ func resourceSecretCreate(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.FromErr(err)
 	}
 
-	// Use /api/v1/secrets endpoint
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf("%s/api/v1/secrets", client.BaseURL), bytes.NewReader(body))
+	// Use /secrets/api/v1/secrets endpoint
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf("%s/secrets/api/v1/secrets", client.BaseURL), bytes.NewReader(body))
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	
+
 	// Set Authorization header
 	authHeader := client.Token
 	if authHeader != "" && len(authHeader) > 7 && authHeader[:7] != "Bearer " {
@@ -170,7 +170,7 @@ func resourceSecretCreate(ctx context.Context, d *schema.ResourceData, m interfa
 	return resourceSecretRead(ctx, d, m)
 }
 
-// resourceSecretRead calls GET /api/v1/secrets/:id or GET /api/v1/secrets to find by name.
+// resourceSecretRead calls GET /secrets/api/v1/secrets/:id or GET /secrets/api/v1/secrets to find by name.
 func resourceSecretRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client, ok := m.(*apiClient)
 	if !ok || client == nil {
@@ -185,7 +185,7 @@ func resourceSecretRead(ctx context.Context, d *schema.ResourceData, m interface
 	var err error
 
 	if resourceID != "" && resourceID != name {
-		// Try GET /api/v1/secrets/:id
+		// Try GET /secrets/api/v1/secrets/:id
 		secret, err = fetchSecretByID(ctx, client, resourceID)
 		if err != nil {
 			log.Printf("[WARN] failed to fetch secret by ID %s: %v", resourceID, err)
@@ -224,7 +224,7 @@ func resourceSecretRead(ctx context.Context, d *schema.ResourceData, m interface
 	return nil
 }
 
-// resourceSecretUpdate calls PUT /api/v1/secrets/:id.
+// resourceSecretUpdate calls PUT /secrets/api/v1/secrets/:id.
 func resourceSecretUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client, ok := m.(*apiClient)
 	if !ok || client == nil {
@@ -242,13 +242,13 @@ func resourceSecretUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.FromErr(err)
 	}
 
-	// Use PUT /api/v1/secrets/:id endpoint
-	req, err := http.NewRequestWithContext(ctx, http.MethodPut, fmt.Sprintf("%s/api/v1/secrets/%s", client.BaseURL, resourceID), bytes.NewReader(body))
+	// Use PUT /secrets/api/v1/secrets/:id endpoint
+	req, err := http.NewRequestWithContext(ctx, http.MethodPut, fmt.Sprintf("%s/secrets/api/v1/secrets/%s", client.BaseURL, resourceID), bytes.NewReader(body))
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	
+
 	// Set Authorization header
 	authHeader := client.Token
 	if authHeader != "" && len(authHeader) > 7 && authHeader[:7] != "Bearer " {
@@ -281,7 +281,7 @@ func resourceSecretUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 	return resourceSecretRead(ctx, d, m)
 }
 
-// resourceSecretDelete calls DELETE /api/v1/secrets/:id.
+// resourceSecretDelete calls DELETE /secrets/api/v1/secrets/:id.
 func resourceSecretDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client, ok := m.(*apiClient)
 	if !ok || client == nil {
@@ -289,23 +289,35 @@ func resourceSecretDelete(ctx context.Context, d *schema.ResourceData, m interfa
 	}
 
 	resourceID := d.Id()
-	if resourceID == "" {
-		// If no ID, try to use name
-		resourceID = d.Get("name").(string)
+	name := d.Get("name").(string)
+
+	// If no ID, try to find the secret by name using the list API
+	if resourceID == "" || resourceID == name {
+		if name != "" {
+			log.Printf("[INFO] No ID found, looking up secret by name: %s", name)
+			secret, err := fetchSecretByName(ctx, client, name)
+			if err != nil {
+				log.Printf("[WARN] failed to find secret by name %s: %v", name, err)
+			} else if secret != nil && secret.ID != "" {
+				resourceID = secret.ID
+				log.Printf("[INFO] Found secret ID: %s for name: %s", resourceID, name)
+			}
+		}
 	}
 
 	if resourceID == "" {
+		log.Printf("[WARN] Cannot delete secret: no ID available and name lookup failed")
 		d.SetId("")
 		return nil
 	}
 
-	// Use DELETE /api/v1/secrets/:id endpoint
-	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, fmt.Sprintf("%s/api/v1/secrets/%s", client.BaseURL, resourceID), nil)
+	// Use DELETE /secrets/api/v1/secrets/:id endpoint
+	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, fmt.Sprintf("%s/secrets/api/v1/secrets/%s", client.BaseURL, resourceID), nil)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	req.Header.Set("Accept", "application/json")
-	
+
 	// Set Authorization header
 	authHeader := client.Token
 	if authHeader != "" && len(authHeader) > 7 && authHeader[:7] != "Bearer " {
@@ -320,18 +332,18 @@ func resourceSecretDelete(ctx context.Context, d *schema.ResourceData, m interfa
 		// Verify deletion by trying to read the secret
 		log.Printf("[WARN] delete request returned error, verifying secret deletion...")
 		time.Sleep(2 * time.Second)
-		
+
 		secret, checkErr := fetchSecretByID(ctx, client, resourceID)
 		if checkErr != nil {
 			log.Printf("[WARN] failed to verify secret deletion: %v", checkErr)
 		}
-		
+
 		if secret == nil {
 			log.Printf("[INFO] secret %s successfully deleted (verified)", resourceID)
 			d.SetId("")
 			return nil
 		}
-		
+
 		return diags
 	}
 	defer resp.Body.Close()
@@ -371,16 +383,16 @@ func resourceSecretDelete(ctx context.Context, d *schema.ResourceData, m interfa
 	return nil
 }
 
-// fetchSecretByID queries GET /api/v1/secrets/:id and returns the secret.
+// fetchSecretByID queries GET /secrets/api/v1/secrets/:id and returns the secret.
 func fetchSecretByID(ctx context.Context, client *apiClient, id string) (*SecretInfo, error) {
-	u := fmt.Sprintf("%s/api/v1/secrets/%s", client.BaseURL, id)
+	u := fmt.Sprintf("%s/secrets/api/v1/secrets/%s", client.BaseURL, id)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Set("Accept", "application/json")
-	
+
 	// Set Authorization header
 	authHeader := client.Token
 	if authHeader != "" && len(authHeader) > 7 && authHeader[:7] != "Bearer " {
@@ -411,16 +423,16 @@ func fetchSecretByID(ctx context.Context, client *apiClient, id string) (*Secret
 	return &secret, nil
 }
 
-// fetchSecretByName queries GET /api/v1/secrets and finds the secret by name.
+// fetchSecretByName queries GET /secrets/api/v1/secrets and finds the secret by name.
 func fetchSecretByName(ctx context.Context, client *apiClient, name string) (*SecretInfo, error) {
-	u := fmt.Sprintf("%s/api/v1/secrets", client.BaseURL)
+	u := fmt.Sprintf("%s/secrets/api/v1/secrets", client.BaseURL)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Set("Accept", "application/json")
-	
+
 	// Set Authorization header
 	authHeader := client.Token
 	if authHeader != "" && len(authHeader) > 7 && authHeader[:7] != "Bearer " {
@@ -455,4 +467,3 @@ func fetchSecretByName(ctx context.Context, client *apiClient, name string) (*Se
 
 	return nil, nil // Not found
 }
-

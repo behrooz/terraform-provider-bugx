@@ -161,7 +161,7 @@ output "secret_created_at" {
 }
 ```
 
-**Note**: The secret resource uses the `/api/v1/secrets` endpoint. Make sure your API base URL points to the correct server (e.g., `http://localhost:8080` for simple-vault API).
+**Note**: The secret resource uses the `/secrets/api/v1/secrets` endpoint. Make sure your API base URL points to the correct server (e.g., `http://localhost:5173` for simple-vault API).
 
 **Secret Resource Attributes**:
 - `name` (required): Unique name for the secret

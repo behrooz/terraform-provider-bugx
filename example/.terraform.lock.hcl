@@ -5,7 +5,7 @@ provider "local/vcluster/vcluster" {
   version     = "0.1.0"
   constraints = "0.1.0"
   hashes = [
-    "h1:PJcwdcb+kfjMsEQqMLrtHARlty/BzxZ9oYdtJZLbyfo=",
+    "h1:vBQ5h/czJ+J/RIMIZZilV+6wsA+bg9v2VIEplffS7RM=",
   ]
 }
 
