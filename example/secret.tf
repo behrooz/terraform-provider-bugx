@@ -21,6 +21,8 @@ resource "vcluster_secret" "database" {
     database = "mydb"
     user     = "dbuser"
     password = "dbpassword"
+    DBPASS = "1234"
+    REDISUSER = "2323"
   }
 }
 
