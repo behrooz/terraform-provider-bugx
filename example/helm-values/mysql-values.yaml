@@ -1,5 +1,5 @@
 # MySQL Helm Chart Values File
-# This file is used by the vcluster_helm_release resource
+# This file is used by the bugx_helm_release resource
 
 auth:
   rootPassword: "myrootpassword"

@@ -17,7 +17,7 @@ func dataSourceCluster() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Name of the vcluster to query",
+				Description: "Name of the bugx cluster to query",
 			},
 			"cluster_id": {
 				Type:        schema.TypeString,

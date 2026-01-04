@@ -1,11 +1,11 @@
-## vcluster Terraform Provider
+## bugx Terraform Provider
 
-Custom Terraform provider that talks to a vcluster API and calls `/createcluster` to create clusters, manage Helm releases, and query existing resources.
+Custom Terraform provider that talks to a bugx API and calls `/createcluster` to create clusters, manage Helm releases, and query existing resources.
 
 ### Features
 
-- **Cluster Management**: Create, read, update, and delete vcluster instances
-- **Helm Release Management**: Deploy and manage Helm charts on vclusters
+- **Cluster Management**: Create, read, update, and delete bugx instances
+- **Helm Release Management**: Deploy and manage Helm charts on bugx clusters
 - **Secret Management**: Create, read, update, and delete secrets via REST API
 - **Data Sources**: Query existing clusters without managing them
 - **Retry Logic**: Automatic retry with exponential backoff for transient network errors
@@ -17,7 +17,7 @@ Custom Terraform provider that talks to a vcluster API and calls `/createcluster
 
 ```bash
 cd /home/behrooz/Projects/vcluster_terraform
-go build -o terraform-provider-vcluster
+go build -o terraform-provider-bugx
 ```
 
 ### Install locally for Terraform
@@ -27,14 +27,14 @@ Terraform expects the provider binary in a specific directory based on
 
 For a local provider with:
 
-- **source**: `local/vcluster/vcluster`
+- **source**: `local/bugx/bugx`
 - **version**: `0.1`
 
 Copy the binary like this (Linux amd64 example):
 
 ```bash
-mkdir -p ~/.terraform.d/plugins/local/vcluster/vcluster/0.1/linux_amd64
-cp terraform-provider-vcluster ~/.terraform.d/plugins/local/vcluster/vcluster/0.1/linux_amd64/
+mkdir -p ~/.terraform.d/plugins/local/bugx/bugx/0.1/linux_amd64
+cp terraform-provider-bugx ~/.terraform.d/plugins/local/bugx/bugx/0.1/linux_amd64/
 ```
 
 Adjust the OS/arch folder name if necessary.
@@ -46,14 +46,14 @@ Create a new directory for using the provider, e.g. `example/` and add `main.tf`
 ```hcl
 terraform {
   required_providers {
-    vcluster = {
-      source  = "local/vcluster/vcluster"
+    bugx = {
+      source  = "local/bugx/bugx"
       version = "0.1"
     }
   }
 }
 
-provider "vcluster" {
+provider "bugx" {
   base_url = "http://localhost:8082"
 
   # Credentials used for POST /login. The provider will automatically
@@ -69,7 +69,7 @@ provider "vcluster" {
   max_retries = 3
 }
 
-resource "vcluster_cluster" "example" {
+resource "bugx_cluster" "example" {
   name             = "newtiny"
   cluster_id       = "2qjqhhqr"
   control_plane    = "k8s"  
@@ -97,16 +97,16 @@ terraform apply
 Query existing clusters without managing them:
 
 ```hcl
-data "vcluster_cluster" "existing" {
+data "bugx_cluster" "existing" {
   name = "mycluster"
 }
 
 output "cluster_status" {
-  value = data.vcluster_cluster.existing.status
+  value = data.bugx_cluster.existing.status
 }
 
 output "cluster_endpoint" {
-  value = data.vcluster_cluster.existing.endpoint
+  value = data.bugx_cluster.existing.endpoint
 }
 ```
 
@@ -115,7 +115,7 @@ output "cluster_endpoint" {
 Import existing clusters into Terraform:
 
 ```bash
-terraform import vcluster_cluster.example <cluster-id>
+terraform import bugx_cluster.example <cluster-id>
 ```
 
 ### Helm Release with Chart Version
@@ -123,15 +123,15 @@ terraform import vcluster_cluster.example <cluster-id>
 Deploy a specific version of a Helm chart:
 
 ```hcl
-resource "vcluster_helm_release" "mysql" {
-  cluster_name = vcluster_cluster.devcluster.name
+resource "bugx_helm_release" "mysql" {
+  cluster_name = bugx_cluster.devcluster.name
   namespace   = "default"
   release     = "mysql"
   chart       = "bitnami/mysql"
   repo        = "https://charts.bitnami.com/bitnami"
   chart_version = "8.0.0"  # Pin to specific version
   values_file = "${path.module}/helm-values/mysql-values.yaml"
-  depends_on  = [vcluster_cluster.devcluster]
+  depends_on  = [bugx_cluster.devcluster]
 }
 ```
 
@@ -140,7 +140,7 @@ resource "vcluster_helm_release" "mysql" {
 Create, update, and delete secrets:
 
 ```hcl
-resource "vcluster_secret" "example" {
+resource "bugx_secret" "example" {
   name        = "my-secret"
   description = "Example secret for testing"
   
@@ -153,11 +153,11 @@ resource "vcluster_secret" "example" {
 
 # Output the secret metadata (data values are sensitive and won't be shown)
 output "secret_id" {
-  value = vcluster_secret.example.id
+  value = bugx_secret.example.id
 }
 
 output "secret_created_at" {
-  value = vcluster_secret.example.created_at
+  value = bugx_secret.example.created_at
 }
 ```
 
@@ -172,7 +172,7 @@ output "secret_created_at" {
 
 **Import existing secrets**:
 ```bash
-terraform import vcluster_secret.example <secret-id>
+terraform import bugx_secret.example <secret-id>
 ```
 
 ### Improvements

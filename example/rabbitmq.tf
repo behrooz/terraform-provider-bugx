@@ -1,9 +1,9 @@
-# # Example: Deploy rabbitmq on vcluster using the helm_install API
+# # Example: Deploy rabbitmq on bugx using the helm_install API
 # # This uses your custom API endpoint instead of local kubeconfig
 
-# # Deploy rabbitmq on the devcluster cluster
-# resource "vcluster_helm_release" "rabbitmq" {
-#   cluster_name = vcluster_cluster.devcluster.name
+# # Deploy rabbitmq on the debugx cluster
+# resource "bugx_helm_release" "rabbitmq" {
+#   cluster_name = bugx_cluster.debugx.name
 #   namespace   = "default"
 #   release     = "rabbitmq"
 #   chart       = "bitnami/rabbitmq"
@@ -13,11 +13,11 @@
 #   values_file = "${path.module}/helm-values/rabbitmq-values.yaml"
     
 #   # Wait for cluster to be ready before deploying
-#   depends_on = [vcluster_cluster.devcluster]
+#   depends_on = [bugx_cluster.debugx]
 # }
 
 # # Output rabbitmq connection info
 # output "rabbitmq_release" {
-#   value = vcluster_helm_release.rabbitmq.release
+#   value = bugx_helm_release.rabbitmq.release
 # }
 

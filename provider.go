@@ -32,25 +32,25 @@ type loginResponse struct {
 	Token string `json:"token"`
 }
 
-// Provider defines the vcluster Terraform provider.
+// Provider defines the bugx Terraform provider.
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"base_url": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Base URL of vcluster API, e.g. http://192.168.1.4",
+				Description: "Base URL of bugx API, e.g. http://192.168.1.4",
 			},
 			"username": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Username for login to vcluster API",
+				Description: "Username for login to bugx API",
 			},
 			"password": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Sensitive:   true,
-				Description: "Password for login to vcluster API",
+				Description: "Password for login to bugx API",
 			},
 			"timeout": {
 				Type:        schema.TypeInt,
@@ -66,13 +66,13 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"vcluster_cluster":        resourceCluster(),
-			"vcluster_helm_release":   resourceHelmRelease(),
-			"vcluster_orphan_cleanup": resourceOrphanCleanup(),
-			"vcluster_secret":         resourceSecret(),
+			"bugx_cluster":        resourceCluster(),
+			"bugx_helm_release":   resourceHelmRelease(),
+			"bugx_orphan_cleanup": resourceOrphanCleanup(),
+			"bugx_secret":         resourceSecret(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"vcluster_cluster": dataSourceCluster(),
+			"bugx_cluster": dataSourceCluster(),
 		},
 		ConfigureContextFunc: func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 			baseURL := d.Get("base_url").(string)

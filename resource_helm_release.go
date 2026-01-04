@@ -26,7 +26,7 @@ type HelmInstallPayload struct {
 	Values      string `json:"Values,omitempty"`   // Optional: Helm values as YAML string
 }
 
-// resourceHelmRelease defines the vcluster_helm_release resource schema and CRUD.
+// resourceHelmRelease defines the bugx_helm_release resource schema and CRUD.
 func resourceHelmRelease() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceHelmReleaseCreate,
@@ -38,7 +38,7 @@ func resourceHelmRelease() *schema.Resource {
 			"cluster_name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Name of the vcluster where to deploy the Helm release",
+				Description: "Name of the bugx cluster where to deploy the Helm release",
 			},
 			"namespace": {
 				Type:        schema.TypeString,

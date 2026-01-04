@@ -26,7 +26,7 @@ func resourceOrphanCleanup() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "Name of the vcluster to clean up orphaned applications from",
+				Description: "Name of the bugx cluster to clean up orphaned applications from",
 			},
 			"apps_to_delete": {
 				Type:        schema.TypeSet,

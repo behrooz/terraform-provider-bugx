@@ -1,13 +1,13 @@
-# Deploying Helm Charts on vcluster with Terraform
+# Deploying Helm Charts on bugx with Terraform
 
-This guide shows how to deploy Helm charts (like MySQL, PostgreSQL, etc.) on your vcluster using the `vcluster_helm_release` resource, which uses your `/helm_install` API endpoint.
+This guide shows how to deploy Helm charts (like MySQL, PostgreSQL, etc.) on your bugx using the `bugx_helm_release` resource, which uses your `/helm_install` API endpoint.
 
 ## Resource Type
 
-The resource type is `vcluster_helm_release` (following Terraform naming: `provider_resource`). You can use it like this:
+The resource type is `bugx_helm_release` (following Terraform naming: `provider_resource`). You can use it like this:
 
 ```hcl
-resource "vcluster_helm_release" "mysql" {
+resource "bugx_helm_release" "mysql" {
   cluster_name = "myttiny"
   namespace   = "default"
   release     = "mysql"
@@ -21,15 +21,15 @@ resource "vcluster_helm_release" "mysql" {
 
 ```hcl
 # Deploy MySQL on your cluster
-resource "vcluster_helm_release" "mysql" {
-  cluster_name = vcluster_cluster.myttiny.name
+resource "bugx_helm_release" "mysql" {
+  cluster_name = bugx_cluster.myttiny.name
   namespace   = "default"
   release     = "mysql"
   chart       = "bitnami/mysql"
   repo        = "https://charts.bitnami.com/bitnami"
   
   # Wait for cluster to be ready
-  depends_on = [vcluster_cluster.myttiny]
+  depends_on = [bugx_cluster.myttiny]
 }
 ```
 
@@ -38,23 +38,23 @@ resource "vcluster_helm_release" "mysql" {
 **Option 1: Reference a values file**
 
 ```hcl
-resource "vcluster_helm_release" "mysql" {
-  cluster_name = vcluster_cluster.myttiny.name
+resource "bugx_helm_release" "mysql" {
+  cluster_name = bugx_cluster.myttiny.name
   namespace   = "default"
   release     = "mysql"
   chart       = "bitnami/mysql"
   repo        = "https://charts.bitnami.com/bitnami"
   values_file = "${path.module}/helm-values/mysql-values.yaml"
   
-  depends_on = [vcluster_cluster.myttiny]
+  depends_on = [bugx_cluster.myttiny]
 }
 ```
 
 **Option 2: Inline values**
 
 ```hcl
-resource "vcluster_helm_release" "mysql" {
-  cluster_name = vcluster_cluster.myttiny.name
+resource "bugx_helm_release" "mysql" {
+  cluster_name = bugx_cluster.myttiny.name
   namespace   = "default"
   release     = "mysql"
   chart       = "bitnami/mysql"
@@ -73,7 +73,7 @@ resource "vcluster_helm_release" "mysql" {
           cpu: "250m"
   EOT
   
-  depends_on = [vcluster_cluster.myttiny]
+  depends_on = [bugx_cluster.myttiny]
 }
 ```
 
@@ -90,15 +90,15 @@ locals {
   })
 }
 
-resource "vcluster_helm_release" "mysql" {
-  cluster_name = vcluster_cluster.myttiny.name
+resource "bugx_helm_release" "mysql" {
+  cluster_name = bugx_cluster.myttiny.name
   namespace   = "default"
   release     = "mysql"
   chart       = "bitnami/mysql"
   repo        = "https://charts.bitnami.com/bitnami"
   values      = local.mysql_values
   
-  depends_on = [vcluster_cluster.myttiny]
+  depends_on = [bugx_cluster.myttiny]
 }
 ```
 
@@ -107,45 +107,45 @@ resource "vcluster_helm_release" "mysql" {
 ### PostgreSQL
 
 ```hcl
-resource "vcluster_helm_release" "postgresql" {
-  cluster_name = vcluster_cluster.myttiny.name
+resource "bugx_helm_release" "postgresql" {
+  cluster_name = bugx_cluster.myttiny.name
   namespace   = "default"
   release     = "postgresql"
   chart       = "bitnami/postgresql"
   repo        = "https://charts.bitnami.com/bitnami"
   values_file = "${path.module}/helm-values/postgresql-values.yaml"
   
-  depends_on = [vcluster_cluster.myttiny]
+  depends_on = [bugx_cluster.myttiny]
 }
 ```
 
 ### Redis
 
 ```hcl
-resource "vcluster_helm_release" "redis" {
-  cluster_name = vcluster_cluster.myttiny.name
+resource "bugx_helm_release" "redis" {
+  cluster_name = bugx_cluster.myttiny.name
   namespace   = "default"
   release     = "redis"
   chart       = "bitnami/redis"
   repo        = "https://charts.bitnami.com/bitnami"
   values_file = "${path.module}/helm-values/redis-values.yaml"
   
-  depends_on = [vcluster_cluster.myttiny]
+  depends_on = [bugx_cluster.myttiny]
 }
 ```
 
 ### Nginx Ingress Controller
 
 ```hcl
-resource "vcluster_helm_release" "nginx_ingress" {
-  cluster_name = vcluster_cluster.myttiny.name
+resource "bugx_helm_release" "nginx_ingress" {
+  cluster_name = bugx_cluster.myttiny.name
   namespace   = "ingress-nginx"
   release     = "nginx-ingress"
   chart       = "ingress-nginx"
   repo        = "https://kubernetes.github.io/ingress-nginx"
   values_file = "${path.module}/helm-values/nginx-ingress-values.yaml"
   
-  depends_on = [vcluster_cluster.myttiny]
+  depends_on = [bugx_cluster.myttiny]
 }
 ```
 
@@ -153,7 +153,7 @@ resource "vcluster_helm_release" "nginx_ingress" {
 
 | Attribute | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `cluster_name` | string | Yes | Name of the vcluster where to deploy |
+| `cluster_name` | string | Yes | Name of the bugx where to deploy |
 | `namespace` | string | Yes | Kubernetes namespace |
 | `release` | string | Yes | Helm release name |
 | `chart` | string | Yes | Chart name (e.g., `bitnami/mysql`) |
@@ -167,9 +167,9 @@ resource "vcluster_helm_release" "nginx_ingress" {
 
 ```bash
 # Rebuild the provider with the new resource
-cd /home/behrooz/Projects/vcluster_terraform
-go build -o terraform-provider-vcluster
-cp terraform-provider-vcluster ~/.terraform.d/plugins/local/vcluster/vcluster/0.1/linux_amd64/
+cd /home/behrooz/Projects/bugx_terraform
+go build -o terraform-provider-bugx
+cp terraform-provider-bugx ~/.terraform.d/plugins/local/bugx/bugx/0.1/linux_amd64/
 
 # In your example directory
 cd example

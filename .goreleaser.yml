@@ -1,0 +1,70 @@
+project_name: terraform-provider-bugx
+
+builds:
+  - id: provider
+    binary: terraform-provider-bugx
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X github.com/behrooz/terraform-provider-bugx/version.Version={{.Version}}
+    env:
+      - CGO_ENABLED=0
+
+archives:
+  - id: default
+    builds:
+      - provider
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
+  algorithm: sha256
+
+signs:
+  - artifacts: checksum
+    signature: "${artifact}.sig"
+
+release:
+  github:
+    owner: behrooz
+    name: terraform-provider-bugx
+  mode: replace
+  header: |
+    ## Terraform Provider bugx {{ .Tag }}
+    
+    See the [CHANGELOG.md](CHANGELOG.md) for details.
+  footer: |
+    ## Installation
+    
+    ```hcl
+    terraform {
+      required_providers {
+        bugx = {
+          source  = "behrooz/bugx"
+          version = "{{ .Tag }}"
+        }
+      }
+    }
+    ```
+
+terraform_registry:
+  owner: behrooz
+  namespace: behrooz
+  name: bugx
+  version: "{{ .Version }}"
+  os: "{{ .Os }}"
+  arch: "{{ .Arch }}"
+  shasum: "{{ .Sha256 }}"
+  filename: "{{ .ArtifactName }}"
+

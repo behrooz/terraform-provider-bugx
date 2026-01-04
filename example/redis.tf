@@ -1,9 +1,9 @@
-# # Example: Deploy redis on vcluster using the helm_install API
+# # Example: Deploy redis on bugx using the helm_install API
 # # This uses your custom API endpoint instead of local kubeconfig
 
-# # Deploy redis on the devcluster cluster
-# resource "vcluster_helm_release" "redis" {
-#   cluster_name = vcluster_cluster.devcluster.name
+# # Deploy redis on the debugx cluster
+# resource "bugx_helm_release" "redis" {
+#   cluster_name = bugx_cluster.debugx.name
 #   namespace   = "default"
 #   release     = "redis"
 #   chart       = "bitnami/redis"
@@ -12,12 +12,12 @@
 #   # Option 1: Use a values file
 #   values_file = "${path.module}/helm-values/redis-values.yaml"
 #   # Wait for cluster to be ready before deploying
-#   depends_on = [vcluster_cluster.devcluster]
+#   depends_on = [bugx_cluster.debugx]
 # }
 
 
 # # Output redis connection info
 # output "redis_release" {
-#   value = vcluster_helm_release.redis.release
+#   value = bugx_helm_release.redis.release
 # }
 

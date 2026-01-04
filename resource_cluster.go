@@ -46,7 +46,7 @@ type ClusterInfo struct {
 	NameSpace   string `json:"NameSpace"`
 }
 
-// resourceCluster defines the vcluster_cluster resource schema and CRUD.
+// resourceCluster defines the bugx_cluster resource schema and CRUD.
 func resourceCluster() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceClusterCreate,

@@ -36,7 +36,7 @@ type SecretsListResponse struct {
 	Secrets []SecretInfo `json:"secrets"`
 }
 
-// resourceSecret defines the vcluster_secret resource schema and CRUD.
+// resourceSecret defines the bugx_secret resource schema and CRUD.
 func resourceSecret() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceSecretCreate,
