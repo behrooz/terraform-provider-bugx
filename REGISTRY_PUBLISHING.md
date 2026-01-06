@@ -282,7 +282,7 @@ git commit -m "Prepare for v1.0.0 release"
 
 # Create and push the tag
 git tag -a v1.0.0 -m "Release v1.0.0"
-git push origin v1.0.0
+git push origin v1.0.0 
 ```
 
 ### 7.3 GitHub Actions Will Automatically:
