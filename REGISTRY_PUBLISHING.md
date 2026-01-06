@@ -91,17 +91,9 @@ release:
       }
     }
     ```
-
-terraform_registry:
-  owner: behrooz  # Your GitHub username
-  namespace: behrooz  # Usually same as owner
-  name: bugx
-  version: "{{ .Version }}"
-  os: "{{ .Os }}"
-  arch: "{{ .Arch }}"
-  shasum: "{{ .Sha256 }}"
-  filename: "{{ .ArtifactName }}"
 ```
+
+**Note:** The Terraform Registry automatically generates the `terraform-registry-manifest.json` file when you publish your provider. You don't need to manually create it or configure it in GoReleaser. The registry scans your GitHub releases and creates the manifest based on the release assets (binaries, checksums, and signatures).
 
 ## Step 3: Set Up GPG Signing
 

@@ -58,13 +58,3 @@ release:
     }
     ```
 
-terraform_registry:
-  owner: behrooz
-  namespace: behrooz
-  name: bugx
-  version: "{{ .Version }}"
-  os: "{{ .Os }}"
-  arch: "{{ .Arch }}"
-  shasum: "{{ .Sha256 }}"
-  filename: "{{ .ArtifactName }}"
-
