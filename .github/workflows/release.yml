@@ -2,8 +2,8 @@ name: Release Terraform Provider
 
 on:
   push:
-    branches:
-      - main   # روی main اجرا میشه
+    tags:
+      - 'v*'
 
 permissions:
   contents: write
