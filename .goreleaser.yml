@@ -34,8 +34,17 @@ checksum:
 signs:
   - artifacts: checksum
     args:
-      - "--local-user"
+      - "--batch"
+      - "--pinentry-mode"
+      - "loopback"
+      - "--passphrase"
+      - "${{ secrets.GPG_PASSPHRASE }}"  # اگر passphrase ندارید، این دو خط رو حذف کنید
+      - "-u"
       - "{{ .Env.GPG_FINGERPRINT }}"
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
 
 
 release:
