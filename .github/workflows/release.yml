@@ -34,16 +34,12 @@ jobs:
 
       - name: Configure GPG for GoReleaser
         id: configure_gpg
-        env:
-          GNUPGHOME: ${{ steps.import_gpg.outputs.gnupg_home }}
-          GPG_TTY: $(tty)
         run: |
           echo "Configuring GPG for GoReleaser..."
           
           # Get values from the import step
           KEY_ID="${{ steps.import_gpg.outputs.keyid }}"
           FINGERPRINT="${{ steps.import_gpg.outputs.fingerprint }}"
-          GPG_HOME="${{ steps.import_gpg.outputs.gnupg_home }}"
           
           # Validate that we have the required values
           if [ -z "$KEY_ID" ]; then
@@ -51,34 +47,25 @@ jobs:
             exit 1
           fi
           
-          if [ -z "$GPG_HOME" ]; then
-            echo "Error: GPG_HOME is empty, trying to use default"
-            GPG_HOME="$HOME/.gnupg"
-          fi
-          
           echo "Key ID: $KEY_ID"
           echo "Fingerprint: $FINGERPRINT"
-          echo "GNUPGHOME: $GPG_HOME"
           
-          # Export GNUPGHOME for this step and subsequent steps
-          echo "GNUPGHOME=$GPG_HOME" >> $GITHUB_ENV
-          
-          # List available keys
-          GNUPGHOME="$GPG_HOME" gpg --list-secret-keys --keyid-format=long
+          # List available keys to verify import
+          gpg --list-secret-keys --keyid-format=long || true
           
           # Set trust level for the key (required for signing)
-          echo "$FINGERPRINT:6:" | GNUPGHOME="$GPG_HOME" gpg --import-ownertrust || true
+          echo "$FINGERPRINT:6:" | gpg --import-ownertrust || true
           
           # Create a wrapper script for GPG that includes the passphrase and key ID
           # This allows GoReleaser to sign without interactive prompts
-          cat > /tmp/gpg-wrapper.sh << SCRIPT
+          cat > /tmp/gpg-wrapper.sh << 'SCRIPT'
           #!/bin/bash
-          exec gpg --batch --yes --pinentry-mode loopback --passphrase "\$GPG_PASSPHRASE" --default-key "$KEY_ID" "\$@"
+          exec gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" --default-key "$GPG_KEY_ID" "$@"
           SCRIPT
           chmod +x /tmp/gpg-wrapper.sh
           
           # Verify the key is usable
-          GNUPGHOME="$GPG_HOME" GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}" /tmp/gpg-wrapper.sh --clearsign <<< "test" > /dev/null 2>&1
+          GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}" GPG_KEY_ID="$KEY_ID" /tmp/gpg-wrapper.sh --clearsign <<< "test" > /dev/null 2>&1
           
           if [ $? -eq 0 ]; then
             echo "✓ GPG key is ready for signing"
@@ -94,9 +81,7 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GNUPGHOME: ${{ steps.import_gpg.outputs.gnupg_home }}
           GPG_TTY: $(tty)
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GPG_KEY_ID: ${{ steps.import_gpg.outputs.keyid }}
 
