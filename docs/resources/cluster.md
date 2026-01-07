@@ -7,7 +7,6 @@ Manages a bugx cluster instance. This resource creates, updates, and deletes bug
 ```hcl
 resource "bugx_cluster" "example" {
   name             = "mycluster"
-  cluster_id       = "2qjqhhqr"
   control_plane    = "k8s"
   cpu              = "1"
   memory           = "1024"
@@ -25,7 +24,7 @@ resource "bugx_cluster" "example" {
 The following arguments are supported:
 
 * `name` - (Required) Name of the cluster
-* `cluster_id` - (Required) Unique identifier for the cluster
+* `cluster_id` - (Optional) Unique identifier for the cluster. If not provided, the API will generate one
 * `control_plane` - (Required) Control plane type (e.g., `k8s`)
 * `cpu` - (Required) CPU allocation for the cluster
 * `memory` - (Required) Memory allocation for the cluster (in MB or with unit like `1024`)
@@ -43,6 +42,7 @@ The following arguments are supported:
 
 In addition to all arguments above, the following attributes are exported:
 
+* `cluster_id` - (Computed) Unique identifier for the cluster (populated after creation if not provided)
 * `endpoint` - (Computed) Cluster endpoint URL
 * `namespace` - (Computed) Kubernetes namespace where the cluster is deployed
 * `kubeconfig` - (Computed, Sensitive) Kubeconfig content for connecting to the cluster (only available when cluster status is `Healthy`)

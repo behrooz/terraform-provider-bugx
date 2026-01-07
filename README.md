@@ -54,8 +54,6 @@ terraform {
 }
 
 provider "bugx" {
-  base_url = "http://localhost:8082"
-
   # Credentials used for POST /login. The provider will automatically
   # call /login, get the token from {"token": "..."} and send it as
   # the Authorization header on subsequent API calls.
@@ -71,7 +69,6 @@ provider "bugx" {
 
 resource "bugx_cluster" "example" {
   name             = "newtiny"
-  cluster_id       = "2qjqhhqr"
   control_plane    = "k8s"  
   cpu              = "1"
   memory           = "1024"

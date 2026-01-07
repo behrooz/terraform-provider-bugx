@@ -36,11 +36,6 @@ type loginResponse struct {
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
-			"base_url": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Base URL of bugx API, e.g. http://192.168.1.4",
-			},
 			"username": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -75,7 +70,7 @@ func Provider() *schema.Provider {
 			"bugx_cluster": dataSourceCluster(),
 		},
 		ConfigureContextFunc: func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-			baseURL := d.Get("base_url").(string)
+			baseURL := "https://bugx.ir"
 			username := d.Get("username").(string)
 			password := d.Get("password").(string)
 

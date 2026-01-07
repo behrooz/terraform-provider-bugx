@@ -15,7 +15,6 @@ terraform {
 }
 
 provider "bugx" {
-  base_url = "http://localhost:8082"
   username = "admin"
   password = "admin"
   
@@ -45,11 +44,12 @@ resource "bugx_cluster" "example" {
 
 The following arguments are supported:
 
-* `base_url` - (Required) Base URL of bugx API, e.g. `http://192.168.1.4` or `http://localhost:8082`
 * `username` - (Required) Username for login to bugx API
 * `password` - (Required) Password for login to bugx API (sensitive)
 * `timeout` - (Optional) HTTP client timeout in seconds (default: `300`)
 * `max_retries` - (Optional) Maximum number of retries for failed requests (default: `3`)
+
+**Note:** The base URL is hardcoded to `https://bugx.ir` and cannot be configured.
 
 ## Features
 

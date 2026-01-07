@@ -59,7 +59,7 @@ func resourceCluster() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"name":             {Type: schema.TypeString, Required: true},
-			"cluster_id":       {Type: schema.TypeString, Required: true},
+			"cluster_id":       {Type: schema.TypeString, Optional: true, Computed: true},
 			"control_plane":    {Type: schema.TypeString, Required: true},
 			"status":           {Type: schema.TypeString, Optional: true, Default: "Progressing"},
 			"cpu":              {Type: schema.TypeString, Required: true},
@@ -81,9 +81,13 @@ func resourceCluster() *schema.Resource {
 
 // buildPayload converts Terraform state to API payload.
 func buildPayload(d *schema.ResourceData) ClusterPayload {
+	clusterID := ""
+	if v, ok := d.GetOk("cluster_id"); ok {
+		clusterID = v.(string)
+	}
 	return ClusterPayload{
 		Name:            d.Get("name").(string),
-		ClusterID:       d.Get("cluster_id").(string),
+		ClusterID:       clusterID,
 		ControlPlane:    d.Get("control_plane").(string),
 		Status:          d.Get("status").(string),
 		Cpu:             d.Get("cpu").(string),
@@ -120,7 +124,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 	req.Header.Set("Content-Type", "application/json")
 	// Set Authorization header with raw token as provided by the login API usage.
 	req.Header.Set("Authorization", client.Token)
-	
+
 	// Set GetBody for retry support
 	if req.Body != nil {
 		bodyBytes, _ := io.ReadAll(req.Body)
@@ -222,7 +226,7 @@ func resourceClusterRead(ctx context.Context, d *schema.ResourceData, m interfac
 	// For now, we'll use the name field, but if importing, we might need to search by ID
 	name := d.Get("name").(string)
 	resourceID := d.Id()
-	
+
 	// If we have an ID but no name (e.g., from import), try to find cluster by ID
 	if name == "" && resourceID != "" {
 		// Try to fetch all clusters and find by ID
@@ -236,7 +240,7 @@ func resourceClusterRead(ctx context.Context, d *schema.ResourceData, m interfac
 			}
 		}
 	}
-	
+
 	if name == "" {
 		// If we still don't have a name, mark as gone
 		d.SetId("")

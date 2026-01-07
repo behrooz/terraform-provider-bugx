@@ -319,7 +319,6 @@ terraform {
 }
 
 provider "bugx" {
-  base_url = "http://localhost:5173"
   username = "admin"
   password = "admin"
 }
