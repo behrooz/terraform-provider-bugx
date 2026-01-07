@@ -1,20 +1,18 @@
-name: Release
+name: Release Terraform Provider
 
 on:
   push:
     branches:
-      - main          # این اکشن وقتی push روی main اجرا میشه
-    tags:
-      - 'v*'          # و همچنین وقتی تگ v* زده شد
-
+      - main   # روی main اجرا میشه
 
 permissions:
   contents: write
   id-token: write
 
 jobs:
-  goreleaser:
+  release:
     runs-on: ubuntu-latest
+
     steps:
       # 1️⃣ Checkout کامل
       - name: Checkout
@@ -46,12 +44,12 @@ jobs:
           FINGERPRINT=$(gpg --list-keys --with-colons | awk -F: '/^fpr:/ {print $10; exit}')
           echo "FINGERPRINT=$FINGERPRINT" >> $GITHUB_ENV
 
-      # 6️⃣ اجرای GoReleaser
+      # 6️⃣ اجرای GoReleaser بدون نیاز به تگ واقعی
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
           version: v1.26.2
-          args: release --clean
+          args: release --clean --snapshot   # <-- snapshot بدون تگ
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GPG_FINGERPRINT: ${{ env.FINGERPRINT }}
