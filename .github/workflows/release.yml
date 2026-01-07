@@ -33,39 +33,52 @@ jobs:
           git_commit_gpgsign: true
 
       - name: Configure GPG for GoReleaser
+        id: configure_gpg
         env:
           GNUPGHOME: ${{ steps.import_gpg.outputs.gnupg_home }}
           GPG_TTY: $(tty)
         run: |
           echo "Configuring GPG for GoReleaser..."
-          echo "GNUPGHOME: $GNUPGHOME"
+          
+          # Get values from the import step
           KEY_ID="${{ steps.import_gpg.outputs.keyid }}"
           FINGERPRINT="${{ steps.import_gpg.outputs.fingerprint }}"
+          GPG_HOME="${{ steps.import_gpg.outputs.gnupg_home }}"
+          
+          # Validate that we have the required values
+          if [ -z "$KEY_ID" ]; then
+            echo "Error: KEY_ID is empty"
+            exit 1
+          fi
+          
+          if [ -z "$GPG_HOME" ]; then
+            echo "Error: GPG_HOME is empty, trying to use default"
+            GPG_HOME="$HOME/.gnupg"
+          fi
           
           echo "Key ID: $KEY_ID"
           echo "Fingerprint: $FINGERPRINT"
+          echo "GNUPGHOME: $GPG_HOME"
+          
+          # Export GNUPGHOME for this step and subsequent steps
+          echo "GNUPGHOME=$GPG_HOME" >> $GITHUB_ENV
           
           # List available keys
-          gpg --list-secret-keys --keyid-format=long
+          GNUPGHOME="$GPG_HOME" gpg --list-secret-keys --keyid-format=long
           
           # Set trust level for the key (required for signing)
-          echo "$FINGERPRINT:6:" | gpg --import-ownertrust || true
+          echo "$FINGERPRINT:6:" | GNUPGHOME="$GPG_HOME" gpg --import-ownertrust || true
           
-          # Configure GPG to use this key as default
-          # Create gpg.conf to set default key
-          echo "default-key $KEY_ID" >> "$GNUPGHOME/gpg.conf"
-          echo "pinentry-mode loopback" >> "$GNUPGHOME/gpg.conf"
-          
-          # Create a wrapper script for GPG that includes the passphrase
+          # Create a wrapper script for GPG that includes the passphrase and key ID
           # This allows GoReleaser to sign without interactive prompts
-          cat > /tmp/gpg-wrapper.sh << 'EOF'
+          cat > /tmp/gpg-wrapper.sh << SCRIPT
           #!/bin/bash
-          exec gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" "$@"
-          EOF
+          exec gpg --batch --yes --pinentry-mode loopback --passphrase "\$GPG_PASSPHRASE" --default-key "$KEY_ID" "\$@"
+          SCRIPT
           chmod +x /tmp/gpg-wrapper.sh
           
           # Verify the key is usable
-          echo "test" | /tmp/gpg-wrapper.sh --clearsign > /dev/null 2>&1
+          GNUPGHOME="$GPG_HOME" GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}" /tmp/gpg-wrapper.sh --clearsign <<< "test" > /dev/null 2>&1
           
           if [ $? -eq 0 ]; then
             echo "✓ GPG key is ready for signing"
