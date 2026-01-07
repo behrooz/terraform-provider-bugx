@@ -34,6 +34,9 @@ checksum:
 signs:
   - artifacts: checksum
     signature: "${artifact}.sig"
+    # Use the GPG wrapper script that includes the passphrase
+    # The workflow creates /tmp/gpg-wrapper.sh with passphrase support
+    cmd: /tmp/gpg-wrapper.sh
 
 release:
   github:

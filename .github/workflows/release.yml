@@ -32,15 +32,46 @@ jobs:
           git_user_signingkey: true
           git_commit_gpgsign: true
 
-      - name: Verify GPG key is available
+      - name: Configure GPG for GoReleaser
+        env:
+          GNUPGHOME: ${{ steps.import_gpg.outputs.gnupg_home }}
+          GPG_TTY: $(tty)
         run: |
-          echo "Checking GPG keys..."
-          gpg --list-secret-keys --keyid-format=long || true
-          echo "Fingerprint: ${{ steps.import_gpg.outputs.fingerprint }}"
-          echo "Key ID: ${{ steps.import_gpg.outputs.keyid }}"
-          # Ensure GPG can find the key
-          export GNUPGHOME="${{ steps.import_gpg.outputs.gnupg_home }}"
+          echo "Configuring GPG for GoReleaser..."
+          echo "GNUPGHOME: $GNUPGHOME"
+          KEY_ID="${{ steps.import_gpg.outputs.keyid }}"
+          FINGERPRINT="${{ steps.import_gpg.outputs.fingerprint }}"
+          
+          echo "Key ID: $KEY_ID"
+          echo "Fingerprint: $FINGERPRINT"
+          
+          # List available keys
           gpg --list-secret-keys --keyid-format=long
+          
+          # Set trust level for the key (required for signing)
+          echo "$FINGERPRINT:6:" | gpg --import-ownertrust || true
+          
+          # Configure GPG to use this key as default
+          # Create gpg.conf to set default key
+          echo "default-key $KEY_ID" >> "$GNUPGHOME/gpg.conf"
+          echo "pinentry-mode loopback" >> "$GNUPGHOME/gpg.conf"
+          
+          # Create a wrapper script for GPG that includes the passphrase
+          # This allows GoReleaser to sign without interactive prompts
+          cat > /tmp/gpg-wrapper.sh << 'EOF'
+          #!/bin/bash
+          exec gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" "$@"
+          EOF
+          chmod +x /tmp/gpg-wrapper.sh
+          
+          # Verify the key is usable
+          echo "test" | /tmp/gpg-wrapper.sh --clearsign > /dev/null 2>&1
+          
+          if [ $? -eq 0 ]; then
+            echo "✓ GPG key is ready for signing"
+          else
+            echo "⚠ GPG key test failed, but continuing..."
+          fi
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
@@ -51,6 +82,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GNUPGHOME: ${{ steps.import_gpg.outputs.gnupg_home }}
+          GPG_TTY: $(tty)
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GPG_KEY_ID: ${{ steps.import_gpg.outputs.keyid }}
 
