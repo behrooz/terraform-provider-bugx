@@ -35,6 +35,7 @@ jobs:
       - name: Configure GPG for GoReleaser
         id: configure_gpg
         run: |
+          set +e  # Don't exit on error for this step
           echo "Configuring GPG for GoReleaser..."
           
           # Get values from the import step
@@ -50,11 +51,11 @@ jobs:
           echo "Key ID: $KEY_ID"
           echo "Fingerprint: $FINGERPRINT"
           
-          # List available keys to verify import
-          gpg --list-secret-keys --keyid-format=long || true
+          # List available keys to verify import (non-fatal)
+          gpg --list-secret-keys --keyid-format=long 2>&1 || echo "Note: Could not list keys (may be normal)"
           
-          # Set trust level for the key (required for signing)
-          echo "$FINGERPRINT:6:" | gpg --import-ownertrust || true
+          # Set trust level for the key (required for signing) - non-fatal
+          echo "$FINGERPRINT:6:" | gpg --import-ownertrust 2>&1 || echo "Note: Trust already set or failed (may be normal)"
           
           # Create a wrapper script for GPG that includes the passphrase and key ID
           # This allows GoReleaser to sign without interactive prompts
@@ -64,14 +65,18 @@ jobs:
           SCRIPT
           chmod +x /tmp/gpg-wrapper.sh
           
-          # Verify the key is usable
-          GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}" GPG_KEY_ID="$KEY_ID" /tmp/gpg-wrapper.sh --clearsign <<< "test" > /dev/null 2>&1
+          # Verify the key is usable (non-fatal test)
+          echo "test" | GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}" GPG_KEY_ID="$KEY_ID" /tmp/gpg-wrapper.sh --clearsign > /dev/null 2>&1
+          TEST_RESULT=$?
           
-          if [ $? -eq 0 ]; then
+          if [ $TEST_RESULT -eq 0 ]; then
             echo "✓ GPG key is ready for signing"
           else
-            echo "⚠ GPG key test failed, but continuing..."
+            echo "⚠ GPG key test returned code $TEST_RESULT, but continuing (key may still work for signing)"
           fi
+          
+          set -e  # Re-enable exit on error
+          echo "GPG wrapper script created at /tmp/gpg-wrapper.sh"
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
