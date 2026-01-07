@@ -2,8 +2,11 @@ name: Release
 
 on:
   push:
+    branches:
+      - main          # این اکشن وقتی push روی main اجرا میشه
     tags:
-      - 'v*'
+      - 'v*'          # و همچنین وقتی تگ v* زده شد
+
 
 permissions:
   contents: write
@@ -13,32 +16,42 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
+      # 1️⃣ Checkout کامل
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # 2️⃣ نصب Go
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.22'
-          
+
+      # 3️⃣ Import GPG key
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v6
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
+      # 4️⃣ ست کردن GPG_TTY
       - name: Set GPG_TTY
         run: echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
 
+      # 5️⃣ استخراج fingerprint کلید
+      - name: Get GPG fingerprint
+        id: gpg
+        run: |
+          FINGERPRINT=$(gpg --list-keys --with-colons | awk -F: '/^fpr:/ {print $10; exit}')
+          echo "FINGERPRINT=$FINGERPRINT" >> $GITHUB_ENV
+
+      # 6️⃣ اجرای GoReleaser
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
-          version: 1.26.2
+          version: v1.26.2
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-
+          GPG_FINGERPRINT: ${{ env.FINGERPRINT }}
