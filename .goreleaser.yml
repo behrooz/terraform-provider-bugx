@@ -42,8 +42,7 @@ signs:
       - "{{ .Env.GPG_PASSPHRASE }}"
       - "--local-user"
       - "{{ .Env.GPG_FINGERPRINT }}"
-
-
+    stdin: "{{ .ArtifactPath }}"
 
 release:
   github:
