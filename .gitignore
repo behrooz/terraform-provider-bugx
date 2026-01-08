@@ -1,0 +1,55 @@
+# Terraform Provider Binary
+terraform-provider-bugx
+terraform-provider-vcluster
+
+# Terraform State Files
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Terraform Lock File (optional - some teams commit this)
+# .terraform.lock.hcl
+
+# Terraform Working Directory
+.terraform/
+.terraform.lock.hcl
+
+# Example directory state files
+example/.terraform/
+example/*.tfstate
+example/*.tfstate.backup
+example/.terraform.lock.hcl
+
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment files
+.env
+.env.local
+
+# Logs
+*.log
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Temporary files
+*.tmp
+*.temp
+

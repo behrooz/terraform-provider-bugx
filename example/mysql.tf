@@ -7,7 +7,6 @@ resource "bugx_helm_release" "mysql" {
   namespace   = "default"
   release     = "mysql"
   chart       = "bitnami/mysql"
-  repo        = "https://charts.bitnami.com/bitnami"
   
   # Option 1: Use a values file
   values_file = "${path.module}/helm-values/mysql-values.yaml"

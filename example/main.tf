@@ -2,7 +2,7 @@ terraform {
   required_providers {
     bugx = {
       source  = "local/bugx/bugx"
-      version = "0.1"
+      version = "0.1.0"
     }
     local = {
       source  = "hashicorp/local"

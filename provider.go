@@ -70,7 +70,7 @@ func Provider() *schema.Provider {
 			"bugx_cluster": dataSourceCluster(),
 		},
 		ConfigureContextFunc: func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-			baseURL := "https://bugx.ir"
+			baseURL := "https://bugx.ir" //"http://localhost"
 			username := d.Get("username").(string)
 			password := d.Get("password").(string)
 

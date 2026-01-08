@@ -21,9 +21,7 @@ type HelmInstallPayload struct {
 	Namespace   string `json:"Namespace"`
 	Release     string `json:"Release"`
 	Chart       string `json:"Chart"`
-	Repo        string `json:"Repo"`
-	Version     string `json:"Version,omitempty"` // Optional: Chart version
-	Values      string `json:"Values,omitempty"`   // Optional: Helm values as YAML string
+	Values      string `json:"Values,omitempty"` // Optional: Helm values as YAML string
 }
 
 // resourceHelmRelease defines the bugx_helm_release resource schema and CRUD.
@@ -57,8 +55,8 @@ func resourceHelmRelease() *schema.Resource {
 			},
 			"repo": {
 				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Helm repository URL (e.g., 'https://charts.bitnami.com/bitnami')",
+				Optional:    true,
+				Description: "Helm repository URL (e.g., 'https://charts.bitnami.com/bitnami'). Optional if chart is already in the cluster's Helm repositories",
 			},
 			"values": {
 				Type:        schema.TypeString,
@@ -86,12 +84,6 @@ func buildHelmPayload(d *schema.ResourceData) (*HelmInstallPayload, error) {
 		Namespace:   d.Get("namespace").(string),
 		Release:     d.Get("release").(string),
 		Chart:       d.Get("chart").(string),
-		Repo:        d.Get("repo").(string),
-	}
-
-	// Handle chart version if provided
-	if chartVersion, ok := d.Get("chart_version").(string); ok && chartVersion != "" {
-		payload.Version = chartVersion
 	}
 
 	// Handle values - prefer values_file if both are provided
@@ -141,7 +133,7 @@ func resourceHelmReleaseCreate(ctx context.Context, d *schema.ResourceData, m in
 		authHeader = "Bearer " + authHeader
 	}
 	req.Header.Set("Authorization", authHeader)
-	
+
 	// Set GetBody for retry support
 	if req.Body != nil {
 		bodyBytes, _ := io.ReadAll(req.Body)
@@ -262,11 +254,11 @@ func resourceHelmReleaseDelete(ctx context.Context, d *schema.ResourceData, m in
 		// Don't clear state if the API call failed - return error so user knows
 		return diag.Errorf("failed to call delete API for Helm release %s (app name: %s): %v", release, appName, diags)
 	}
-	
+
 	if resp == nil {
 		return diag.Errorf("delete API returned nil response for Helm release %s (app name: %s)", release, appName)
 	}
-	
+
 	defer resp.Body.Close()
 
 	// Read response body

@@ -1,11 +1,11 @@
 # This file is maintained automatically by "terraform init".
 # Manual edits may be lost in future updates.
 
-provider "local/vcluster/vcluster" {
+provider "local/bugx/bugx" {
   version     = "0.1.0"
   constraints = "0.1.0"
   hashes = [
-    "h1:vBQ5h/czJ+J/RIMIZZilV+6wsA+bg9v2VIEplffS7RM=",
+    "h1:ah1cUJ0LmiCjPEzE1/yzxBQi0wYZDkill7ZZV0u/fX4=",
   ]
 }
 
