@@ -15,8 +15,14 @@ terraform {
 }
 
 provider "bugx" {
+  # Authentication: Use either username/password OR access_key/secret_key
+  # Option 1: Username and Password
   username = "admin"
   password = "admin"
+  
+  # Option 2: Access Key and Secret Key (alternative to username/password)
+  # access_key = "your-access-key"
+  # secret_key = "your-secret-key"
   
   # Optional: Configure timeout (in seconds, default: 300)
   timeout = 300
@@ -44,8 +50,22 @@ resource "bugx_cluster" "example" {
 
 The following arguments are supported:
 
-* `username` - (Required) Username for login to bugx API
-* `password` - (Required) Password for login to bugx API (sensitive)
+### Authentication
+
+The provider supports two authentication methods. You must provide either:
+
+**Option 1: Username and Password**
+* `username` - (Optional) Username for login to bugx API (required if `access_key` is not provided)
+* `password` - (Optional, Sensitive) Password for login to bugx API (required if `secret_key` is not provided)
+
+**Option 2: Access Key and Secret Key**
+* `access_key` - (Optional, Sensitive) Access key for login to bugx API (required if `username` is not provided)
+* `secret_key` - (Optional, Sensitive) Secret key for login to bugx API (required if `password` is not provided)
+
+**Note:** You must provide either `username`/`password` OR `access_key`/`secret_key`. Both authentication methods will return a JWT token that is used for subsequent API calls.
+
+### Configuration Options
+
 * `timeout` - (Optional) HTTP client timeout in seconds (default: `300`)
 * `max_retries` - (Optional) Maximum number of retries for failed requests (default: `3`)
 

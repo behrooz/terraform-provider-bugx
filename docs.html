@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bugx Terraform Provider Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            padding: 0 20px 15px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 0;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 10px 20px;
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: #34495e;
+        }
+
+        .sidebar .submenu {
+            padding-left: 20px;
+        }
+
+        .sidebar .submenu a {
+            padding: 8px 20px;
+            font-size: 0.9em;
+            color: #bdc3c7;
+        }
+
+        /* Main Content */
+        .content {
+            flex: 1;
+            background: white;
+            padding: 40px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        h3 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        h4 {
+            color: #7f8c8d;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #e74c3c;
+        }
+
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        pre code {
+            background: transparent;
+            color: #ecf0f1;
+            padding: 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .badge-required {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .badge-optional {
+            background: #3498db;
+            color: white;
+        }
+
+        .badge-computed {
+            background: #27ae60;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        table th {
+            background: #34495e;
+            color: white;
+            font-weight: 600;
+        }
+
+        table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border-left: 4px solid #3498db;
+            color: #0c5460;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-left: 4px solid #f39c12;
+            color: #856404;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border-left: 4px solid #27ae60;
+            color: #155724;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+
+        .feature-card h4 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .toc li {
+            margin: 8px 0;
+        }
+
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .content {
+                margin: 10px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <h2>Documentation</h2>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#getting-started">Getting Started</a></li>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#provider-config">Provider Configuration</a></li>
+                <li>
+                    <a href="#resources">Resources</a>
+                    <ul class="submenu">
+                        <li><a href="#resource-cluster">bugx_cluster</a></li>
+                        <li><a href="#resource-helm">bugx_helm_release</a></li>
+                        <li><a href="#resource-secret">bugx_secret</a></li>
+                        <li><a href="#resource-orphan">bugx_orphan_cleanup</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#data-sources">Data Sources</a>
+                    <ul class="submenu">
+                        <li><a href="#data-cluster">bugx_cluster</a></li>
+                    </ul>
+                </li>
+                <li><a href="#examples">Examples</a></li>
+                <li><a href="#best-practices">Best Practices</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+            </ul>
+        </nav>
+
+        <main class="content">
+            <h1>bugx Terraform Provider</h1>
+            
+            <section id="overview">
+                <h2>Overview</h2>
+                <p>
+                    The <strong>bugx</strong> Terraform provider is a custom provider that enables you to manage bugx clusters, 
+                    Helm releases, secrets, and query existing resources through the bugx API using Infrastructure as Code (IaC) principles.
+                </p>
+
+                <div class="feature-list">
+                    <div class="feature-card">
+                        <h4>🚀 Cluster Management</h4>
+                        <p>Create, read, update, and delete bugx cluster instances with full lifecycle management.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📦 Helm Release Management</h4>
+                        <p>Deploy and manage Helm charts on bugx clusters with version pinning support.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🔐 Secret Management</h4>
+                        <p>Create, update, and delete secrets via REST API with secure data handling.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🔍 Data Sources</h4>
+                        <p>Query existing clusters and resources without managing them in Terraform state.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🔄 Retry Logic</h4>
+                        <p>Automatic retry with exponential backoff for transient network errors.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>⏱️ Configurable Timeouts</h4>
+                        <p>Customizable HTTP client timeouts and retry settings per provider instance.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="getting-started">
+                <h2>Getting Started</h2>
+                <p>
+                    This provider allows you to manage bugx infrastructure using Terraform. Before you begin, ensure you have:
+                </p>
+                <ul>
+                    <li>Terraform installed (version 1.0 or later)</li>
+                    <li>Go 1.22 or later (for building from source)</li>
+                    <li>Access to the bugx API endpoint</li>
+                    <li>Valid credentials for the bugx API</li>
+                </ul>
+            </section>
+
+            <section id="installation">
+                <h2>Installation</h2>
+                
+                <h3>Build from Source</h3>
+                <pre><code>cd /home/behrooz/Projects/vcluster_terraform
+go build -o terraform-provider-bugx</code></pre>
+
+                <h3>Install Locally for Terraform</h3>
+                <p>
+                    Terraform expects the provider binary in a specific directory based on 
+                    <code>&lt;hostname&gt;/&lt;namespace&gt;/&lt;type&gt;/&lt;version&gt;/&lt;os&gt;_&lt;arch&gt;</code>.
+                </p>
+                <p>
+                    For a local provider with:
+                </p>
+                <ul>
+                    <li><strong>source</strong>: <code>local/bugx/bugx</code></li>
+                    <li><strong>version</strong>: <code>0.1</code></li>
+                </ul>
+                <p>Copy the binary like this (Linux amd64 example):</p>
+                <pre><code>mkdir -p ~/.terraform.d/plugins/local/bugx/bugx/0.1/linux_amd64
+cp terraform-provider-bugx ~/.terraform.d/plugins/local/bugx/bugx/0.1/linux_amd64/</code></pre>
+                <p>Adjust the OS/arch folder name if necessary.</p>
+            </section>
+
+            <section id="provider-config">
+                <h2>Provider Configuration</h2>
+                <p>
+                    Configure the bugx provider in your Terraform configuration file:
+                </p>
+                <pre><code>terraform {
+  required_providers {
+    bugx = {
+      source  = "local/bugx/bugx"
+      version = "0.1"
+    }
+  }
+}
+
+provider "bugx" {
+  # Credentials used for POST /login. The provider will automatically
+  # call /login, get the token from {"token": "..."} and send it as
+  # the Authorization header on subsequent API calls.
+  username = "admin"
+  password = "admin"
+  
+  # Optional: Configure timeout (in seconds, default: 300)
+  timeout = 300
+  
+  # Optional: Configure max retries for failed requests (default: 3)
+  max_retries = 3
+}</code></pre>
+
+                <h3>Provider Arguments</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Argument</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>username</code></td>
+                            <td>string</td>
+                            <td><span class="badge badge-required">Required</span></td>
+                            <td>Username for login to bugx API</td>
+                        </tr>
+                        <tr>
+                            <td><code>password</code></td>
+                            <td>string</td>
+                            <td><span class="badge badge-required">Required</span></td>
+                            <td>Password for login to bugx API (sensitive)</td>
+                        </tr>
+                        <tr>
+                            <td><code>timeout</code></td>
+                            <td>integer</td>
+                            <td><span class="badge badge-optional">Optional</span></td>
+                            <td>HTTP client timeout in seconds (default: 300)</td>
+                        </tr>
+                        <tr>
+                            <td><code>max_retries</code></td>
+                            <td>integer</td>
+                            <td><span class="badge badge-optional">Optional</span></td>
+                            <td>Maximum number of retries for failed requests (default: 3)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-info">
+                    <strong>Note:</strong> The base URL is hardcoded to <code>https://bugx.ir</code> and cannot be configured.
+                </div>
+            </section>
+
+            <section id="resources">
+                <h2>Resources</h2>
+
+                <section id="resource-cluster">
+                    <h3>bugx_cluster</h3>
+                    <p>
+                        Manages a bugx cluster instance. This resource creates, updates, and deletes bugx clusters through the bugx API.
+                    </p>
+
+                    <h4>Example Usage</h4>
+                    <pre><code>resource "bugx_cluster" "example" {
+  name             = "mycluster"
+  control_plane    = "k8s"
+  cpu              = "1"
+  memory           = "1024"
+  platform_version = "v1.31.6"
+  cluster_type     = "tiny"
+  coredns_cpu      = "0.5"
+  coredns_memory   = "0.250Gi"
+  apiserver_cpu    = "0.5"
+  apiserver_memory = "0.250Gi"
+}</code></pre>
+
+                    <h4>Argument Reference</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Argument</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>name</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>Name of the cluster</td>
+                            </tr>
+                            <tr>
+                                <td><code>cluster_id</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-optional">Optional</span></td>
+                                <td>Unique identifier for the cluster. If not provided, the API will generate one</td>
+                            </tr>
+                            <tr>
+                                <td><code>control_plane</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>Control plane type (e.g., <code>k8s</code>)</td>
+                            </tr>
+                            <tr>
+                                <td><code>cpu</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>CPU allocation for the cluster</td>
+                            </tr>
+                            <tr>
+                                <td><code>memory</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>Memory allocation for the cluster (in MB or with unit like <code>1024</code>)</td>
+                            </tr>
+                            <tr>
+                                <td><code>platform_version</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>Platform version (e.g., <code>v1.31.6</code>)</td>
+                            </tr>
+                            <tr>
+                                <td><code>cluster_type</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>Type of cluster (e.g., <code>tiny</code>, <code>small</code>, <code>medium</code>, <code>large</code>)</td>
+                            </tr>
+                            <tr>
+                                <td><code>coredns_cpu</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>CPU allocation for CoreDNS (e.g., <code>0.5</code>)</td>
+                            </tr>
+                            <tr>
+                                <td><code>coredns_memory</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>Memory allocation for CoreDNS (e.g., <code>0.250Gi</code>)</td>
+                            </tr>
+                            <tr>
+                                <td><code>apiserver_cpu</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>CPU allocation for API server (e.g., <code>0.5</code>)</td>
+                            </tr>
+                            <tr>
+                                <td><code>apiserver_memory</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>Memory allocation for API server (e.g., <code>0.250Gi</code>)</td>
+                            </tr>
+                            <tr>
+                                <td><code>status</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-optional">Optional</span></td>
+                                <td>Initial status of the cluster (default: <code>Progressing</code>)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Attribute Reference</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Attribute</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>cluster_id</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-computed">Computed</span> Unique identifier for the cluster (populated after creation if not provided)</td>
+                            </tr>
+                            <tr>
+                                <td><code>endpoint</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-computed">Computed</span> Cluster endpoint URL</td>
+                            </tr>
+                            <tr>
+                                <td><code>namespace</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-computed">Computed</span> Kubernetes namespace where the cluster is deployed</td>
+                            </tr>
+                            <tr>
+                                <td><code>kubeconfig</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-computed">Computed, Sensitive</span> Kubeconfig content for connecting to the cluster (only available when cluster status is <code>Healthy</code>)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Import</h4>
+                    <p>Clusters can be imported using the cluster ID:</p>
+                    <pre><code>terraform import bugx_cluster.example &lt;cluster-id&gt;</code></pre>
+
+                    <div class="alert alert-info">
+                        <strong>Notes:</strong>
+                        <ul>
+                            <li>The provider will automatically poll the cluster status after creation until it becomes <code>Healthy</code></li>
+                            <li>The <code>kubeconfig</code> attribute is only populated when the cluster status is <code>Healthy</code></li>
+                            <li>Cluster deletion requires both the cluster name and namespace</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="resource-helm">
+                    <h3>bugx_helm_release</h3>
+                    <p>
+                        Manages Helm releases on bugx clusters. This resource allows you to deploy and manage Helm charts with version pinning support.
+                    </p>
+
+                    <h4>Example Usage</h4>
+                    <pre><code>resource "bugx_helm_release" "mysql" {
+  cluster_name = bugx_cluster.devcluster.name
+  namespace   = "default"
+  release     = "mysql"
+  chart       = "bitnami/mysql"
+  repo        = "https://charts.bitnami.com/bitnami"
+  chart_version = "8.0.0"  # Pin to specific version
+  values_file = "${path.module}/helm-values/mysql-values.yaml"
+  depends_on  = [bugx_cluster.devcluster]
+}</code></pre>
+
+                    <h4>Argument Reference</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Argument</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>cluster_name</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>Name of the bugx cluster where the Helm release will be deployed</td>
+                            </tr>
+                            <tr>
+                                <td><code>namespace</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>Kubernetes namespace for the Helm release</td>
+                            </tr>
+                            <tr>
+                                <td><code>release</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>Name of the Helm release</td>
+                            </tr>
+                            <tr>
+                                <td><code>chart</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>Helm chart name (e.g., <code>bitnami/mysql</code>)</td>
+                            </tr>
+                            <tr>
+                                <td><code>repo</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>Helm repository URL</td>
+                            </tr>
+                            <tr>
+                                <td><code>chart_version</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-optional">Optional</span></td>
+                                <td>Specific chart version to pin (recommended for reproducible deployments)</td>
+                            </tr>
+                            <tr>
+                                <td><code>values_file</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-optional">Optional</span></td>
+                                <td>Path to Helm values file</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="resource-secret">
+                    <h3>bugx_secret</h3>
+                    <p>
+                        Manages secrets via the bugx API. This resource allows you to create, update, and delete secrets with secure data handling.
+                    </p>
+
+                    <h4>Example Usage</h4>
+                    <pre><code>resource "bugx_secret" "example" {
+  name        = "my-secret"
+  description = "Example secret for testing"
+  
+  data = {
+    username = "admin"
+    password = "secret-password"
+    api_key  = "sk-1234567890abcdef"
+  }
+}
+
+# Output the secret metadata (data values are sensitive and won't be shown)
+output "secret_id" {
+  value = bugx_secret.example.id
+}
+
+output "secret_created_at" {
+  value = bugx_secret.example.created_at
+}</code></pre>
+
+                    <h4>Argument Reference</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Argument</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>name</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>Unique name for the secret</td>
+                            </tr>
+                            <tr>
+                                <td><code>description</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-optional">Optional</span></td>
+                                <td>Description of the secret</td>
+                            </tr>
+                            <tr>
+                                <td><code>data</code></td>
+                                <td>map(string)</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>Map of key-value pairs (marked as sensitive)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Attribute Reference</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Attribute</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>id</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-computed">Computed</span> Unique identifier for the secret</td>
+                            </tr>
+                            <tr>
+                                <td><code>created_at</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-computed">Computed</span> Timestamp when the secret was created</td>
+                            </tr>
+                            <tr>
+                                <td><code>updated_at</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-computed">Computed</span> Timestamp when the secret was last updated</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Import</h4>
+                    <p>Secrets can be imported using the secret ID:</p>
+                    <pre><code>terraform import bugx_secret.example &lt;secret-id&gt;</code></pre>
+
+                    <div class="alert alert-warning">
+                        <strong>Note:</strong> The secret resource uses the <code>/secrets/api/v1/secrets</code> endpoint. 
+                        Make sure your API base URL points to the correct server.
+                    </div>
+                </section>
+
+                <section id="resource-orphan">
+                    <h3>bugx_orphan_cleanup</h3>
+                    <p>
+                        Manages orphan resource cleanup operations. This resource helps clean up orphaned resources in bugx clusters.
+                    </p>
+
+                    <h4>Example Usage</h4>
+                    <pre><code>resource "bugx_orphan_cleanup" "example" {
+  cluster_name = bugx_cluster.example.name
+  # Additional configuration options
+}</code></pre>
+
+                    <div class="alert alert-info">
+                        <strong>Note:</strong> Refer to the resource documentation for complete argument and attribute reference.
+                    </div>
+                </section>
+            </section>
+
+            <section id="data-sources">
+                <h2>Data Sources</h2>
+
+                <section id="data-cluster">
+                    <h3>bugx_cluster</h3>
+                    <p>
+                        Query existing clusters without managing them in Terraform state. This is useful for referencing 
+                        existing clusters or getting cluster information for use in other resources.
+                    </p>
+
+                    <h4>Example Usage</h4>
+                    <pre><code>data "bugx_cluster" "existing" {
+  name = "mycluster"
+}
+
+output "cluster_status" {
+  value = data.bugx_cluster.existing.status
+}
+
+output "cluster_endpoint" {
+  value = data.bugx_cluster.existing.endpoint
+}</code></pre>
+
+                    <h4>Argument Reference</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Argument</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>name</code></td>
+                                <td>string</td>
+                                <td><span class="badge badge-required">Required</span></td>
+                                <td>Name of the cluster to query</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Attribute Reference</h4>
+                    <p>
+                        The data source exports all attributes available from the cluster resource, including:
+                    </p>
+                    <ul>
+                        <li><code>cluster_id</code> - Unique identifier for the cluster</li>
+                        <li><code>status</code> - Current status of the cluster</li>
+                        <li><code>endpoint</code> - Cluster endpoint URL</li>
+                        <li><code>namespace</code> - Kubernetes namespace</li>
+                        <li><code>platform_version</code> - Platform version</li>
+                        <li>And other cluster attributes</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section id="examples">
+                <h2>Examples</h2>
+
+                <h3>Complete Example: Cluster with Kubeconfig</h3>
+                <pre><code>terraform {
+  required_providers {
+    bugx = {
+      source  = "local/bugx/bugx"
+      version = "0.1.0"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.4"
+    }
+  }
+}
+
+provider "bugx" {
+  username = "admin"
+  password = "admin"
+}
+
+resource "bugx_cluster" "devcluster" {
+  name             = "devcluster"
+  control_plane    = "k8s"
+  cpu              = "1"
+  memory           = "1024"
+  platform_version = "v1.31.6"
+  cluster_type     = "medium"
+  coredns_cpu      = "0.5"
+  coredns_memory   = "500Mi"
+  apiserver_cpu    = "0.5"
+  apiserver_memory = "500Mi"
+}
+
+# Save kubeconfig directly to a file
+resource "local_file" "kubeconfig" {
+  filename = "${path.module}/kubeconfig-${bugx_cluster.devcluster.name}.yaml"
+  content  = try(bugx_cluster.devcluster.kubeconfig, "")
+  file_permission = "0600"
+}
+
+# Output the kubeconfig (will be marked as sensitive)
+output "kubeconfig" {
+  value     = bugx_cluster.devcluster.kubeconfig
+  sensitive = true
+}
+
+# Output the kubeconfig file path
+output "kubeconfig_file" {
+  value = local_file.kubeconfig.filename
+}</code></pre>
+
+                <h3>Example: Cluster with Helm Release</h3>
+                <pre><code>resource "bugx_cluster" "app_cluster" {
+  name             = "app-cluster"
+  control_plane    = "k8s"
+  cpu              = "2"
+  memory           = "2048"
+  platform_version = "v1.31.6"
+  cluster_type     = "large"
+  coredns_cpu      = "1.0"
+  coredns_memory   = "1Gi"
+  apiserver_cpu    = "1.0"
+  apiserver_memory = "1Gi"
+}
+
+resource "bugx_helm_release" "mysql" {
+  cluster_name  = bugx_cluster.app_cluster.name
+  namespace     = "default"
+  release       = "mysql"
+  chart         = "bitnami/mysql"
+  repo          = "https://charts.bitnami.com/bitnami"
+  chart_version = "8.0.0"
+  values_file   = "${path.module}/helm-values/mysql-values.yaml"
+  depends_on    = [bugx_cluster.app_cluster]
+}</code></pre>
+            </section>
+
+            <section id="best-practices">
+                <h2>Best Practices</h2>
+
+                <h3>1. Use Version Pinning</h3>
+                <p>
+                    Always pin specific versions for Helm charts to ensure reproducible deployments:
+                </p>
+                <pre><code>chart_version = "8.0.0"  # Pin to specific version</code></pre>
+
+                <h3>2. Secure Credentials</h3>
+                <p>
+                    Never commit credentials to version control. Use environment variables or Terraform Cloud/Enterprise:
+                </p>
+                <pre><code>provider "bugx" {
+  username = var.bugx_username
+  password = var.bugx_password  # Mark as sensitive
+}</code></pre>
+
+                <h3>3. Use Dependencies</h3>
+                <p>
+                    Always use <code>depends_on</code> to ensure resources are created in the correct order:
+                </p>
+                <pre><code>resource "bugx_helm_release" "app" {
+  depends_on = [bugx_cluster.example]
+  # ...
+}</code></pre>
+
+                <h3>4. Handle Sensitive Data</h3>
+                <p>
+                    Mark sensitive outputs and use appropriate file permissions for kubeconfig files:
+                </p>
+                <pre><code>resource "local_file" "kubeconfig" {
+  file_permission = "0600"  # Read/write for owner only
+  # ...
+}</code></pre>
+
+                <h3>5. Configure Timeouts</h3>
+                <p>
+                    Adjust timeouts based on your cluster creation times:
+                </p>
+                <pre><code>provider "bugx" {
+  timeout = 600  # 10 minutes for large clusters
+}</code></pre>
+            </section>
+
+            <section id="troubleshooting">
+                <h2>Troubleshooting</h2>
+
+                <h3>Common Issues</h3>
+
+                <h4>1. Authentication Failures</h4>
+                <div class="alert alert-warning">
+                    <strong>Problem:</strong> Login fails with 401 Unauthorized
+                    <br><strong>Solution:</strong> Verify your username and password are correct. Check that the API endpoint is accessible.
+                </div>
+
+                <h4>2. Cluster Creation Timeout</h4>
+                <div class="alert alert-warning">
+                    <strong>Problem:</strong> Cluster creation times out
+                    <br><strong>Solution:</strong> Increase the <code>timeout</code> value in the provider configuration. Large clusters may take longer to become healthy.
+                </div>
+
+                <h4>3. Kubeconfig Not Available</h4>
+                <div class="alert alert-info">
+                    <strong>Problem:</strong> <code>kubeconfig</code> attribute is empty
+                    <br><strong>Solution:</strong> The kubeconfig is only available when the cluster status is <code>Healthy</code>. Wait for the cluster to become healthy before accessing the kubeconfig.
+                </div>
+
+                <h4>4. Network Errors</h4>
+                <div class="alert alert-info">
+                    <strong>Problem:</strong> Transient network errors during API calls
+                    <br><strong>Solution:</strong> The provider includes automatic retry logic with exponential backoff. You can adjust <code>max_retries</code> in the provider configuration.
+                </div>
+
+                <h4>5. Import Failures</h4>
+                <div class="alert alert-warning">
+                    <strong>Problem:</strong> Unable to import existing resources
+                    <br><strong>Solution:</strong> Ensure you're using the correct resource ID format. For clusters, use the cluster ID. For secrets, use the secret ID.
+                </div>
+
+                <h3>Debugging Tips</h3>
+                <ul>
+                    <li>Enable Terraform debug logging: <code>TF_LOG=DEBUG terraform apply</code></li>
+                    <li>Check API response codes and error messages in the logs</li>
+                    <li>Verify network connectivity to the bugx API endpoint</li>
+                    <li>Ensure the provider binary is in the correct location</li>
+                    <li>Check Terraform version compatibility</li>
+                </ul>
+            </section>
+
+            <footer style="margin-top: 60px; padding-top: 20px; border-top: 2px solid #ecf0f1; color: #7f8c8d; text-align: center;">
+                <p>bugx Terraform Provider Documentation</p>
+                <p style="font-size: 0.9em; margin-top: 10px;">Last updated: 2024</p>
+            </footer>
+        </main>
+    </div>
+</body>
+</html>
+
