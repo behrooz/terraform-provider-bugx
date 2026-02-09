@@ -31,18 +31,17 @@ provider "bugx" {
   max_retries = 3
 }
 
-resource "bugx_cluster" "example" {
-  name             = "mycluster"
-  cluster_id       = "2qjqhhqr"
-  control_plane    = "k8s"
+resource "bugx_cluster" "devcluster" {
+  name             = "devcluster"
+  control_plane    = "k8s"  
   cpu              = "1"
   memory           = "1024"
   platform_version = "v1.31.6"
-  cluster_type     = "tiny"
+  cluster_type     = "medium"
   coredns_cpu      = "0.5"
-  coredns_memory   = "0.250Gi"
+  coredns_memory   = "500Mi"
   apiserver_cpu    = "0.5"
-  apiserver_memory = "0.250Gi"
+  apiserver_memory = "500Mi"
 }
 ```
 
