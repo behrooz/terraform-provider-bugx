@@ -69,7 +69,7 @@ The provider supports two authentication methods. You must provide either:
 * `timeout` - (Optional) HTTP client timeout in seconds (default: `300`)
 * `max_retries` - (Optional) Maximum number of retries for failed requests (default: `3`)
 
-**Note:** The base URL is hardcoded to `https://bugx.ir` and cannot be configured.
+**Note:** The base URL is hardcoded to `https://api.bugx.ir` and cannot be configured.
 
 ## Features
 

@@ -13,13 +13,14 @@ terraform {
 
 provider "bugx" {
   # Authentication: Use either username/password OR access_key/secret_key
+  
   # Option 1: Username and Password
-  username = "admin"
-  password = "admin"
+  # username = "admin"
+  # password = "admin"
   
   # Option 2: Access Key and Secret Key (alternative to username/password)
-  # access_key = "your-access-key"
-  # secret_key = "your-secret-key"
+  access_key = "ak_ce1103f7b788a326311595b16cdbdca41025c6641c79660b2318197e76415e62"
+  secret_key = "sk_69353dda6e8364ca8c153b98e4c7d610c5181773e2352b9224f55c45ff508ced"
 }
 
 resource "bugx_cluster" "devcluster" {

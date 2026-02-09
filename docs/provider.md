@@ -95,7 +95,7 @@ provider "bugx" {
 
 ## Base URL
 
-The base URL is hardcoded to `https://bugx.ir` and cannot be configured through the provider. All API requests will be made to this base URL.
+The base URL is hardcoded to `https://api.bugx.ir` and cannot be configured through the provider. All API requests will be made to this base URL.
 
 ## Authentication Flow
 

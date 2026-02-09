@@ -22,12 +22,12 @@ type apiClient struct {
 }
 
 // loginRequest represents the request body for /login.
-// Supports both username/password and access_key/secret_key authentication.
+// Supports both username/password and accessKey/secretKey authentication.
 type loginRequest struct {
 	Username  string `json:"username,omitempty"`
 	Password  string `json:"password,omitempty"`
-	AccessKey string `json:"access_key,omitempty"`
-	SecretKey string `json:"secret_key,omitempty"`
+	AccessKey string `json:"accessKey,omitempty"`
+	SecretKey string `json:"secretKey,omitempty"`
 }
 
 // loginResponse represents the response body from /login.
@@ -85,7 +85,7 @@ func Provider() *schema.Provider {
 			"bugx_cluster": dataSourceCluster(),
 		},
 		ConfigureContextFunc: func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-			baseURL := "https://bugx.ir" //"http://localhost"
+			baseURL := "https://api.bugx.ir"
 
 			// Get authentication credentials
 			username, hasUsername := d.GetOk("username")
