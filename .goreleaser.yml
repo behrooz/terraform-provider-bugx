@@ -22,9 +22,7 @@ archives:
   - id: default
     builds:
       - provider
-    format_overrides:
-      - goos: windows
-        format: zip
+    format: zip
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
 
 checksum:
