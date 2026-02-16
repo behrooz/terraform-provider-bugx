@@ -37,7 +37,7 @@ resource "bugx_cluster" "devcluster" {
   cpu              = "1"
   memory           = "1024"
   platform_version = "v1.31.6"
-  cluster_type     = "medium"
+  cluster_type     = "tiny"
   coredns_cpu      = "0.5"
   coredns_memory   = "500Mi"
   apiserver_cpu    = "0.5"
