@@ -54,13 +54,14 @@ terraform {
 }
 
 provider "bugx" {
-  base_url = "http://localhost:8082"
-
-  # Credentials used for POST /login. The provider will automatically
-  # call /login, get the token from {"token": "..."} and send it as
-  # the Authorization header on subsequent API calls.
+  # Authentication: Use either username/password OR access_key/secret_key
+  # Option 1: Username and Password
   username = "admin"
   password = "admin"
+  
+  # Option 2: Access Key and Secret Key (alternative to username/password)
+  # access_key = "your-access-key"
+  # secret_key = "your-secret-key"
   
   # Optional: Configure timeout (in seconds, default: 300)
   timeout = 300
@@ -71,7 +72,6 @@ provider "bugx" {
 
 resource "bugx_cluster" "example" {
   name             = "newtiny"
-  cluster_id       = "2qjqhhqr"
   control_plane    = "k8s"  
   cpu              = "1"
   memory           = "1024"

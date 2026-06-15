@@ -22,9 +22,7 @@ archives:
   - id: default
     builds:
       - provider
-    format_overrides:
-      - goos: windows
-        format: zip
+    format: zip
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
 
 checksum:
@@ -33,10 +31,19 @@ checksum:
 
 signs:
   - artifacts: checksum
-    signature: "${artifact}.sig"
-    # Use the GPG wrapper script that includes the passphrase
-    # The workflow creates /tmp/gpg-wrapper.sh with passphrase support
-    cmd: /tmp/gpg-wrapper.sh
+    args:
+      - "--batch"
+      - "--pinentry-mode"
+      - "loopback"
+      - "--passphrase"
+      - "${{ secrets.GPG_PASSPHRASE }}"  # اگر passphrase ندارید، این دو خط رو حذف کنید
+      - "-u"
+      - "{{ .Env.GPG_FINGERPRINT }}"
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
+
 
 release:
   github:

@@ -22,9 +22,12 @@ type apiClient struct {
 }
 
 // loginRequest represents the request body for /login.
+// Supports both username/password and accessKey/secretKey authentication.
 type loginRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username  string `json:"username,omitempty"`
+	Password  string `json:"password,omitempty"`
+	AccessKey string `json:"accessKey,omitempty"`
+	SecretKey string `json:"secretKey,omitempty"`
 }
 
 // loginResponse represents the response body from /login.
@@ -36,21 +39,28 @@ type loginResponse struct {
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
-			"base_url": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Base URL of bugx API, e.g. http://192.168.1.4",
-			},
 			"username": {
 				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Username for login to bugx API",
+				Optional:    true,
+				Description: "Username for login to bugx API (required if access_key is not provided)",
 			},
 			"password": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				Sensitive:   true,
-				Description: "Password for login to bugx API",
+				Description: "Password for login to bugx API (required if secret_key is not provided)",
+			},
+			"access_key": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Sensitive:   true,
+				Description: "Access key for login to bugx API (required if username is not provided)",
+			},
+			"secret_key": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Sensitive:   true,
+				Description: "Secret key for login to bugx API (required if password is not provided)",
 			},
 			"timeout": {
 				Type:        schema.TypeInt,
@@ -75,9 +85,18 @@ func Provider() *schema.Provider {
 			"bugx_cluster": dataSourceCluster(),
 		},
 		ConfigureContextFunc: func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-			baseURL := d.Get("base_url").(string)
-			username := d.Get("username").(string)
-			password := d.Get("password").(string)
+			baseURL := "https://api.bugx.ir"
+
+			// Get authentication credentials
+			username, hasUsername := d.GetOk("username")
+			password, hasPassword := d.GetOk("password")
+			accessKey, hasAccessKey := d.GetOk("access_key")
+			secretKey, hasSecretKey := d.GetOk("secret_key")
+
+			// Validate that at least one authentication method is provided
+			if (!hasUsername || !hasPassword) && (!hasAccessKey || !hasSecretKey) {
+				return nil, diag.Errorf("either username/password or access_key/secret_key must be provided")
+			}
 
 			// Get optional configuration
 			timeoutSeconds := d.Get("timeout").(int)
@@ -115,10 +134,19 @@ func Provider() *schema.Provider {
 			}
 
 			// Perform login to obtain token.
-			reqBody, err := json.Marshal(loginRequest{
-				Username: username,
-				Password: password,
-			})
+			loginReq := loginRequest{}
+
+			if hasUsername && hasPassword {
+				loginReq.Username = username.(string)
+				loginReq.Password = password.(string)
+			}
+
+			if hasAccessKey && hasSecretKey {
+				loginReq.AccessKey = accessKey.(string)
+				loginReq.SecretKey = secretKey.(string)
+			}
+
+			reqBody, err := json.Marshal(loginReq)
 			if err != nil {
 				return nil, diag.FromErr(err)
 			}
