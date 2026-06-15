@@ -1,38 +1,29 @@
 terraform {
   required_providers {
     bugx = {
-      source  = "local/bugx/bugx"
-      version = "0.1"
-    }
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.4"
+      source  = "behrooz/bugx"
+      version = "1.8.16"
     }
   }
 }
 
 provider "bugx" {
-  base_url = "http://192.168.1.4"
-
+  
   # Credentials used for POST /login. The provider will automatically
   # call /login, get the token from {"token": "..."} and send it as
   # the Authorization header on subsequent API calls.
-  username = "admin"
-  password = "admin"
+  access_key = ""
+  secret_key = ""
 }
 
 resource "bugx_cluster" "devcluster" {
   name             = "devcluster"
-  cluster_id       = "2qjqhhqr"
   control_plane    = "k8s"  
-  cpu              = "1"
-  memory           = "1024"
-  platform_version = "v1.31.6"
-  cluster_type     = "medium"
-  coredns_cpu      = "0.5"
-  coredns_memory   = "500Mi"
-  apiserver_cpu    = "0.5"
-  apiserver_memory = "500Mi"
+  cluster_type     = "large"
+  coredns_cpu      = "512m"
+  coredns_memory   = "512Mi"
+  apiserver_cpu    = "512m"
+  apiserver_memory = "512Mi"
 }
 
 # Option 1: Save kubeconfig directly to a file

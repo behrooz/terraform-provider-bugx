@@ -11,15 +11,15 @@ auth:
 primary:
   resources:
     requests:
-      memory: "512Mi"
-      cpu: "250m"
+      memory: "256Mi"
+      cpu: "256m"
     limits:
-      memory: "1Gi"
-      cpu: "500m"
+      memory: "256Mi"
+      cpu: "256m"
   
   persistence:
     enabled: true
-    size: "8Gi"
+    size: "4Gi"
     storageClass: "longhorn"
     accessModes:
       - ReadWriteOnce

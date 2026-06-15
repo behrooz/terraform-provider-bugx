@@ -1,11 +1,17 @@
 # This file is maintained automatically by "terraform init".
 # Manual edits may be lost in future updates.
 
-provider "local/vcluster/vcluster" {
-  version     = "0.1.0"
-  constraints = "0.1.0"
+provider "registry.terraform.io/behrooz/bugx" {
+  version     = "1.8.16"
+  constraints = "1.8.16"
   hashes = [
-    "h1:vBQ5h/czJ+J/RIMIZZilV+6wsA+bg9v2VIEplffS7RM=",
+    "h1:+bXa9zkt8BlpVM/ZUVvj44D6p3jVlVvxwTOQdEmq09k=",
+    "zh:0803396695d1efbc8b8ccd21879f3798405b8007d8e3414798ab0d8e0f510c6c",
+    "zh:0f39dc57f86a6036dcc778a2ef655cd34f6fc273c29bc0ccaa1d0057f351a39c",
+    "zh:7886eea145d9a8c419b155c3572125206145d7c582ae4332215f4d18c90a4567",
+    "zh:9652dfb02c25b67e675fb23e577c16cb4fa087bd5550f706a812024b85495d13",
+    "zh:cae57c7013f2aa898b39f0d41d27122685cd97a787126c68942f24ad618a8c53",
+    "zh:f0c482a0a996a01f5434989436b4dee709c6bc281a18ec42338723b661e18f11",
   ]
 }
 
