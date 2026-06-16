@@ -1,6 +1,6 @@
 # bugx_secret Resource
 
-Manages secrets in the bugx API. This resource creates, updates, and deletes secrets via the `/secrets/api/v1/secrets` endpoint.
+Manages secrets in the bugx API. This resource creates, updates, and deletes secrets via the `/api/v1/secrets` endpoint.
 
 ## Example Usage
 
@@ -68,7 +68,7 @@ terraform import bugx_secret.example <secret-id>
 
 * The `data` attribute is marked as sensitive and will not be displayed in Terraform output
 * Secret names must be unique within the bugx API
-* The resource uses the `/secrets/api/v1/secrets` endpoint. Make sure your API base URL points to the correct server
+* The resource uses the `/api/v1/secrets` endpoint. Make sure your API base URL points to the correct server
 * When importing, you can use either the secret ID or name
 * The provider will automatically look up secrets by name if the ID is not available
 

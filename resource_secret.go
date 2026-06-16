@@ -31,7 +31,7 @@ type SecretInfo struct {
 	UpdatedAt   string            `json:"updatedAt,omitempty"`
 }
 
-// SecretsListResponse represents the response from GET /secrets/api/v1/secrets.
+// SecretsListResponse represents the response from GET /api/v1/secrets.
 type SecretsListResponse struct {
 	Secrets []SecretInfo `json:"secrets"`
 }
@@ -102,7 +102,7 @@ func buildSecretPayload(d *schema.ResourceData) SecretPayload {
 	return payload
 }
 
-// resourceSecretCreate calls POST /secrets/api/v1/secrets.
+// resourceSecretCreate calls POST /api/v1/secrets.
 func resourceSecretCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client, ok := m.(*apiClient)
 	if !ok || client == nil {
@@ -115,8 +115,8 @@ func resourceSecretCreate(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.FromErr(err)
 	}
 
-	// Use /secrets/api/v1/secrets endpoint
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf("%s/secrets/api/v1/secrets", client.VaultBaseURL), bytes.NewReader(body))
+	// Use /api/v1/secrets endpoint
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf("%s/api/v1/secrets", client.VaultBaseURL), bytes.NewReader(body))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -170,7 +170,7 @@ func resourceSecretCreate(ctx context.Context, d *schema.ResourceData, m interfa
 	return resourceSecretRead(ctx, d, m)
 }
 
-// resourceSecretRead calls GET /secrets/api/v1/secrets/:id or GET /secrets/api/v1/secrets to find by name.
+// resourceSecretRead calls GET /api/v1/secrets/:id or GET /api/v1/secrets to find by name.
 func resourceSecretRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client, ok := m.(*apiClient)
 	if !ok || client == nil {
@@ -185,7 +185,7 @@ func resourceSecretRead(ctx context.Context, d *schema.ResourceData, m interface
 	var err error
 
 	if resourceID != "" && resourceID != name {
-		// Try GET /secrets/api/v1/secrets/:id
+		// Try GET /api/v1/secrets/:id
 		secret, err = fetchSecretByID(ctx, client, resourceID)
 		if err != nil {
 			log.Printf("[WARN] failed to fetch secret by ID %s: %v", resourceID, err)
@@ -224,7 +224,7 @@ func resourceSecretRead(ctx context.Context, d *schema.ResourceData, m interface
 	return nil
 }
 
-// resourceSecretUpdate calls PUT /secrets/api/v1/secrets/:id.
+// resourceSecretUpdate calls PUT /api/v1/secrets/:id.
 func resourceSecretUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client, ok := m.(*apiClient)
 	if !ok || client == nil {
@@ -242,8 +242,8 @@ func resourceSecretUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.FromErr(err)
 	}
 
-	// Use PUT /secrets/api/v1/secrets/:id endpoint
-	req, err := http.NewRequestWithContext(ctx, http.MethodPut, fmt.Sprintf("%s/secrets/api/v1/secrets/%s", client.VaultBaseURL, resourceID), bytes.NewReader(body))
+	// Use PUT /api/v1/secrets/:id endpoint
+	req, err := http.NewRequestWithContext(ctx, http.MethodPut, fmt.Sprintf("%s/api/v1/secrets/%s", client.VaultBaseURL, resourceID), bytes.NewReader(body))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -281,7 +281,7 @@ func resourceSecretUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 	return resourceSecretRead(ctx, d, m)
 }
 
-// resourceSecretDelete calls DELETE /secrets/api/v1/secrets/:id.
+// resourceSecretDelete calls DELETE /api/v1/secrets/:id.
 func resourceSecretDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client, ok := m.(*apiClient)
 	if !ok || client == nil {
@@ -311,8 +311,8 @@ func resourceSecretDelete(ctx context.Context, d *schema.ResourceData, m interfa
 		return nil
 	}
 
-	// Use DELETE /secrets/api/v1/secrets/:id endpoint
-	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, fmt.Sprintf("%s/secrets/api/v1/secrets/%s", client.VaultBaseURL, resourceID), nil)
+	// Use DELETE /api/v1/secrets/:id endpoint
+	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, fmt.Sprintf("%s/api/v1/secrets/%s", client.VaultBaseURL, resourceID), nil)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -383,9 +383,9 @@ func resourceSecretDelete(ctx context.Context, d *schema.ResourceData, m interfa
 	return nil
 }
 
-// fetchSecretByID queries GET /secrets/api/v1/secrets/:id and returns the secret.
+// fetchSecretByID queries GET /api/v1/secrets/:id and returns the secret.
 func fetchSecretByID(ctx context.Context, client *apiClient, id string) (*SecretInfo, error) {
-	u := fmt.Sprintf("%s/secrets/api/v1/secrets/%s", client.VaultBaseURL, id)
+	u := fmt.Sprintf("%s/api/v1/secrets/%s", client.VaultBaseURL, id)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
 	if err != nil {
@@ -423,9 +423,9 @@ func fetchSecretByID(ctx context.Context, client *apiClient, id string) (*Secret
 	return &secret, nil
 }
 
-// fetchSecretByName queries GET /secrets/api/v1/secrets and finds the secret by name.
+// fetchSecretByName queries GET /api/v1/secrets and finds the secret by name.
 func fetchSecretByName(ctx context.Context, client *apiClient, name string) (*SecretInfo, error) {
-	u := fmt.Sprintf("%s/secrets/api/v1/secrets", client.VaultBaseURL)
+	u := fmt.Sprintf("%s/api/v1/secrets", client.VaultBaseURL)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
 	if err != nil {
