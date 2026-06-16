@@ -7,10 +7,10 @@
 #   namespace   = "default"
 #   release     = "mysql"
 #   chart       = "bitnami/mysql"
-  
+
 #   # Option 1: Use a values file
 #   values_file = "${path.module}/helm-values/mysql-values.yaml"
-  
+
 #   depends_on = [bugx_cluster.devcluster]
 # }
 

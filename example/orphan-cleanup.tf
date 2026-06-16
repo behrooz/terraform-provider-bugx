@@ -8,13 +8,13 @@
 # # the app name would be "ns-977i-rabbitmq"
 # resource "bugx_orphan_cleanup" "cleanup" {
 #   cluster_name = bugx_cluster.debugx.name
-  
+
 #   # Explicitly list apps to delete
 #   apps_to_delete = [
 #     "ns-977i-rabbitmq",  # Example: delete rabbitmq if it was commented out
 #     # Add more app names here as needed
 #   ]
-  
+
 #   depends_on = [bugx_cluster.debugx]
 # }
 

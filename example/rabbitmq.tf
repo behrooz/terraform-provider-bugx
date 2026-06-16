@@ -8,10 +8,10 @@
 #   release     = "rabbitmq"
 #   chart       = "bitnami/rabbitmq"
 #   repo        = "https://charts.bitnami.com/bitnami"
-  
+
 #   # Option 1: Use a values file
 #   values_file = "${path.module}/helm-values/rabbitmq-values.yaml"
-    
+
 #   # Wait for cluster to be ready before deploying
 #   depends_on = [bugx_cluster.debugx]
 # }

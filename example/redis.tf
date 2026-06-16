@@ -8,7 +8,7 @@
 #   release     = "redis"
 #   chart       = "bitnami/redis"
 #   repo        = "https://charts.bitnami.com/bitnami"
-  
+
 #   # Option 1: Use a values file
 #   values_file = "${path.module}/helm-values/redis-values.yaml"
 #   # Wait for cluster to be ready before deploying

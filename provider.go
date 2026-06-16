@@ -15,10 +15,11 @@ import (
 
 // apiClient holds configuration and auth token for talking to the backend API.
 type apiClient struct {
-	BaseURL     string
-	Token       string
-	HTTPClient  *http.Client
-	RetryConfig RetryConfig
+	VaultBaseURL string
+	BaseURL      string
+	Token        string
+	HTTPClient   *http.Client
+	RetryConfig  RetryConfig
 }
 
 // loginRequest represents the request body for /login.
@@ -86,7 +87,7 @@ func Provider() *schema.Provider {
 		},
 		ConfigureContextFunc: func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 			baseURL := "https://api.bugx.ir"
-
+			VaultBaseURL := "https://vault.bugx.ir/"
 			// Get authentication credentials
 			username, hasUsername := d.GetOk("username")
 			password, hasPassword := d.GetOk("password")
@@ -128,9 +129,10 @@ func Provider() *schema.Provider {
 			}
 
 			client := &apiClient{
-				BaseURL:     baseURL,
-				HTTPClient:  httpClient,
-				RetryConfig: retryConfig,
+				BaseURL:      baseURL,
+				VaultBaseURL: VaultBaseURL,
+				HTTPClient:   httpClient,
+				RetryConfig:  retryConfig,
 			}
 
 			// Perform login to obtain token.

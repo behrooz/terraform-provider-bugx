@@ -2,7 +2,7 @@
 # resource "bugx_secret" "example" {
 #   name        = "my-secret"
 #   description = "Example secret for testing"
-  
+
 #   data = {
 #     username = "admin"
 #     password = "secret-password"
@@ -14,14 +14,14 @@
 resource "bugx_secret" "database" {
   name        = "database-credentials"
   description = "Database connection credentials"
-  
+
   data = {
-    host     = "db.example.com"
-    port     = "5432"
-    database = "mydb"
-    user     = "dbuser"
-    password = "dbpassword"
-    DBPASS = "1234"
+    host      = "db.example.com"
+    port      = "5432"
+    database  = "mydb"
+    user      = "dbuser"
+    password  = "dbpassword"
+    DBPASS    = "1234"
     REDISUSER = "2323"
   }
 }

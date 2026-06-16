@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "bugx" {
-  
+
   # Credentials used for POST /login. The provider will automatically
   # call /login, get the token from {"token": "..."} and send it as
   # the Authorization header on subsequent API calls.
@@ -18,8 +18,11 @@ provider "bugx" {
 
 resource "bugx_cluster" "devcluster" {
   name             = "devcluster"
-  control_plane    = "k8s"  
+  control_plane    = "k8s"
   cluster_type     = "large"
+  cpu              = "4"
+  memory           = "8Gi"
+  platform_version = "v1.31.6"
   coredns_cpu      = "512m"
   coredns_memory   = "512Mi"
   apiserver_cpu    = "512m"
@@ -28,8 +31,8 @@ resource "bugx_cluster" "devcluster" {
 
 # Option 1: Save kubeconfig directly to a file
 resource "local_file" "kubeconfig" {
-  filename = "${path.module}/kubeconfig-${bugx_cluster.devcluster.name}.yaml"
-  content  = try(bugx_cluster.devcluster.kubeconfig, "")
+  filename        = "${path.module}/kubeconfig-${bugx_cluster.devcluster.name}.yaml"
+  content         = try(bugx_cluster.devcluster.kubeconfig, "")
   file_permission = "0600"
 }
 

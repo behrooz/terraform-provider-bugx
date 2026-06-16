@@ -116,7 +116,7 @@ func resourceSecretCreate(ctx context.Context, d *schema.ResourceData, m interfa
 	}
 
 	// Use /secrets/api/v1/secrets endpoint
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf("%s/secrets/api/v1/secrets", client.BaseURL), bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf("%s/secrets/api/v1/secrets", client.VaultBaseURL), bytes.NewReader(body))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -243,7 +243,7 @@ func resourceSecretUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 	}
 
 	// Use PUT /secrets/api/v1/secrets/:id endpoint
-	req, err := http.NewRequestWithContext(ctx, http.MethodPut, fmt.Sprintf("%s/secrets/api/v1/secrets/%s", client.BaseURL, resourceID), bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPut, fmt.Sprintf("%s/secrets/api/v1/secrets/%s", client.VaultBaseURL, resourceID), bytes.NewReader(body))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -312,7 +312,7 @@ func resourceSecretDelete(ctx context.Context, d *schema.ResourceData, m interfa
 	}
 
 	// Use DELETE /secrets/api/v1/secrets/:id endpoint
-	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, fmt.Sprintf("%s/secrets/api/v1/secrets/%s", client.BaseURL, resourceID), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, fmt.Sprintf("%s/secrets/api/v1/secrets/%s", client.VaultBaseURL, resourceID), nil)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -385,7 +385,7 @@ func resourceSecretDelete(ctx context.Context, d *schema.ResourceData, m interfa
 
 // fetchSecretByID queries GET /secrets/api/v1/secrets/:id and returns the secret.
 func fetchSecretByID(ctx context.Context, client *apiClient, id string) (*SecretInfo, error) {
-	u := fmt.Sprintf("%s/secrets/api/v1/secrets/%s", client.BaseURL, id)
+	u := fmt.Sprintf("%s/secrets/api/v1/secrets/%s", client.VaultBaseURL, id)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
 	if err != nil {
@@ -425,7 +425,7 @@ func fetchSecretByID(ctx context.Context, client *apiClient, id string) (*Secret
 
 // fetchSecretByName queries GET /secrets/api/v1/secrets and finds the secret by name.
 func fetchSecretByName(ctx context.Context, client *apiClient, name string) (*SecretInfo, error) {
-	u := fmt.Sprintf("%s/secrets/api/v1/secrets", client.BaseURL)
+	u := fmt.Sprintf("%s/secrets/api/v1/secrets", client.VaultBaseURL)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
 	if err != nil {
