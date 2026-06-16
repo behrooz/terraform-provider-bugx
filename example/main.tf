@@ -2,7 +2,7 @@ terraform {
   required_providers {
     bugx = {
       source  = "behrooz/bugx"
-      version = "1.8.17"
+      version = "1.8.19"
     }
   }
 }
@@ -12,8 +12,8 @@ provider "bugx" {
   # Credentials used for POST /login. The provider will automatically
   # call /login, get the token from {"token": "..."} and send it as
   # the Authorization header on subsequent API calls.
-  access_key = ""
-  secret_key = ""
+  access_key = "ak_7d0639cb1e7704c76a3c4a204cf0d29f81a66171b6984a202daf9baf8e64031b"
+  secret_key = "sk_010715f3e504157cb8b60c32b06cfb476fb240878ffc24ace1bbbff37cc9d4b7"
 }
 
 resource "bugx_cluster" "devcluster" {

@@ -87,7 +87,7 @@ func Provider() *schema.Provider {
 		},
 		ConfigureContextFunc: func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 			baseURL := "https://api.bugx.ir"
-			VaultBaseURL := "https://vault.bugx.ir/"
+			VaultBaseURL := "https://vault.bugx.ir"
 			// Get authentication credentials
 			username, hasUsername := d.GetOk("username")
 			password, hasPassword := d.GetOk("password")

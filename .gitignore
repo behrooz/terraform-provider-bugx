@@ -53,3 +53,5 @@ Thumbs.db
 *.tmp
 *.temp
 
+example/terraform.tfstate
+example/.terraform.lock.hcl

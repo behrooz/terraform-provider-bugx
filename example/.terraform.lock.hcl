@@ -1,22 +1,17 @@
 # This file is maintained automatically by "terraform init".
 # Manual edits may be lost in future updates.
 
-provider "registry.terraform.io/behrooz/bugx" {
-  version     = "1.8.17"
-  constraints = "1.8.17"
+provider "local/bugx/bugx" {
+  version     = "0.1.0"
+  constraints = "0.1.0"
   hashes = [
-    "h1:OzGZnyebvjniMucDzP7NFTCN3x8pm1ASxNn7nLkpcsk=",
-    "zh:276839b2740e430f5eb57912c633a7ac6521b2ddc5f1d7e5ba411e8faaad2fb2",
-    "zh:3183b59097c1bd4025fdcfece7207af550b6ef044ceeb78ccb6908715fc76dfe",
-    "zh:67576b5e1491fd4d7a94a7c8f5e345854d91df79162469b2675ff1e215637a3e",
-    "zh:6ab50e4656d2a5077a962199d3c5dda8143bec831839cdb2a58942675bd230cd",
-    "zh:6c17f3b5078ae3b19bb63f898445b14dc623f79fedb125cee8fad9c63120494b",
-    "zh:877aeb45103e1cb204cdc42f70ed2e42cc0cf39918ab1b1cfba8ca2a01ba3e24",
+    "h1:9dIW98Z5qIWow9zNbs91Ca6i8Z8hbNXXfciUQfeWKEs=",
   ]
 }
 
 provider "registry.terraform.io/hashicorp/local" {
-  version = "2.9.0"
+  version     = "2.9.0"
+  constraints = "~> 2.4"
   hashes = [
     "h1:9rBZCMNpxKwMlRbWH2QpwD3kqUCAejdOZQ/aiiDObXQ=",
     "zh:0baa4566cf77f1ff52f4293d1c8536202dd23edc197c3196413a28343c3ac3a0",
